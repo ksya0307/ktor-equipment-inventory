@@ -6,7 +6,7 @@ import com.ksenialexeev.plugins.*
 
 fun main() {
     //Heroku uses the PORT environment variable
-    
+
     embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
         configureRouting()
      //   configureSerialization()
