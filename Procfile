@@ -1,1 +1,1 @@
-web: ./build/install/equipment-inventory/bin/equipment-inventory
+web: ./build/install/com.ksenialexeev.equipment-inventory/bin/com.ksenialexeev.equipment-inventory
