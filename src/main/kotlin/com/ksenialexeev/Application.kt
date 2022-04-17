@@ -6,8 +6,11 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.ksenialexeev.plugins.*
 import com.ksenialexeev.routes.categoryRouting
+import com.ksenialexeev.routes.classroomEquipment
 import com.ksenialexeev.routes.classroomRouting
+import com.ksenialexeev.routes.commentRouting
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.response.*
@@ -29,9 +32,11 @@ fun main() {
         install(Koin) {
             modules(jsonModule, mappersModule, managerModule)
         }
-        //install(Resources)
         install(ContentNegotiation) {
             json(json)
+        }
+        install(Authentication){
+
         }
 
         install(StatusPages) {
@@ -47,6 +52,8 @@ fun main() {
             route("api/v1/"){
                 categoryRouting()
                 classroomRouting()
+                commentRouting()
+                classroomEquipment()
             }
         }
 

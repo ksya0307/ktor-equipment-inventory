@@ -50,6 +50,7 @@ Users
                 - пароль
 
 --------------- 2 ---------------
+DONE
 Categories
 Получение категории:
                 - select name from categories
@@ -60,12 +61,14 @@ Classrooms
                 - select number from classrooms
 
 --------------- 4 ---------------
+DONE
 ClassroomsEquipment
 Получение конкретного оборудования:
                 - select inventory_number, number_in_classroom ...
                                     where equipment = 'ПК', classroom = '120'
 
 --------------- 5 ---------------
+DONE
 Comments
 Получение комментариев:
                 - select inventory_number, comment, user , timestamp, equipment
@@ -85,8 +88,14 @@ Users
 Получение списка ответственных лиц за аудитории:
                 - select Фамилия ИО from users
 
+--------------- 9 ---------------
+DONE
+Classrooms
+Получить список аудиторий по id преподавателя
+
 --------------------------------- DELETE ---------------------------------
 
+DONE
 1 -- Categories
 Удаление категории
 

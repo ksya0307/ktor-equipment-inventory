@@ -6,7 +6,7 @@ import com.ksenialexeev.models.ClassroomDto
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class ClassroomMapper: KoinComponent {
+class ClassroomMapper : KoinComponent {
 
     val userMapper by inject<UserMapper>()
 

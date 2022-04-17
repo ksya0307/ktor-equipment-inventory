@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.ReferenceOption
 
 //Таблица
 object ClassroomsEquipments:IntIdTable("classrooms_equipment"){
-    val inventory_number = integer("inventory_number")
+    val inventory_number = long("inventory_number")
     val classroom = reference(
         "classroom",
         Classrooms,

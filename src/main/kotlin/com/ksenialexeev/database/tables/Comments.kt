@@ -1,5 +1,6 @@
 package com.ksenialexeev.database.tables
 
+import com.ksenialexeev.database.tables.Comment.Companion.referrersOn
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -28,8 +29,8 @@ object Comments: IntIdTable(){
 class Comment(id:EntityID<Int>) : IntEntity(id){
     companion object: EntityClass<Int, Comment>(Comments)
 
-    var inventory by Comments.inventory
-    var user by Comments.user
+    var inventory by Inventory referencedOn Comments.inventory
+    var user by User referencedOn Comments.user
     var comment by Comments.comment
     var datetime by Comments.datetime
 }
