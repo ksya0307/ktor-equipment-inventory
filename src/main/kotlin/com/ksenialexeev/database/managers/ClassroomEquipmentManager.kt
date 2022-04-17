@@ -1,12 +1,10 @@
 package com.ksenialexeev.database.managers
 
 import com.ksenialexeev.database.tables.*
-import com.ksenialexeev.exceptions.NotFoundClassroomException
 import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.ClassroomEquipmentMapper
 import com.ksenialexeev.models.ClassroomEquipmentDto
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
