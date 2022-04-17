@@ -8,10 +8,13 @@ import org.koin.ktor.ext.inject
 
 fun Route.classroomRouting() {
     val classroomManager by inject<ClassroomManager>()
-
     route("classrooms") {
         get{
             call.respond(classroomManager.getAllClassrooms())
+        }
+        get("{user-id}") {
+            call.parameters["user-id"]?.let { it1 -> classroomManager.getClassroomsByUser(it1.toInt()) }
+                ?.let { it2 -> call.respond(it2) }
         }
     }
 }

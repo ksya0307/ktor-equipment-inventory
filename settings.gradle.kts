@@ -1,1 +1,1 @@
-rootProject.name = "com.ksenialexeev.equipment-inventory"
+rootProject.name = "equipment-inventory"
