@@ -62,11 +62,3 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         jvmTarget = "11"
     }
 }
-//
-//tasks {
-//    shadowJar {
-//        manifest {
-//            attributes(Pair("Main-Class", "com.ksenialexeev.ApplicationKt.main"))
-//        }
-//    }
-//}
