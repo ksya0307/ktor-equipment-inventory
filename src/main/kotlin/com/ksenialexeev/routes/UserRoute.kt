@@ -21,6 +21,7 @@ fun Route.userRouting(){
     route("login"){
         post {
             val user = call.receive<UserLoginDto>()
+            println("$user.username $user.password")
             val access = JWT.create()
                 .withAudience(audience)
                 .withIssuer(issuer)
