@@ -18,7 +18,7 @@ import java.util.*
 fun Route.userRouting(){
     val userManager by inject<UserManager>()
 
-    route("/login"){
+    route("login"){
         post {
             val user = call.receive<UserLoginDto>()
             val access = JWT.create()
@@ -39,7 +39,7 @@ fun Route.userRouting(){
     }
 
     authenticate("auth-jwt-refresh") {
-        get("/refresh") {
+        get("refresh") {
             val principal = call.principal<JWTPrincipal>()
             val userId = principal!!.payload.getClaim("id").asInt()
             val access = JWT.create()
