@@ -13,7 +13,7 @@ object Users:IntIdTable(){
     val name = varchar("name",64)
     val patronymic = varchar("patronymic",64)
     val username = varchar("username",64)
-    val password = varchar("password",64)
+    val password = text("password")
     val role = enumeration("role", Role::class)
 }
 

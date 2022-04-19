@@ -8,10 +8,7 @@ import com.ksenialexeev.exceptions.NotFoundException
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.ksenialexeev.plugins.*
-import com.ksenialexeev.routes.categoryRouting
-import com.ksenialexeev.routes.classroomEquipment
-import com.ksenialexeev.routes.classroomRouting
-import com.ksenialexeev.routes.commentRouting
+import com.ksenialexeev.routes.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -24,6 +21,13 @@ import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
+
+val accessTokenPeriod = System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt() ?: 60000
+val refreshTokenPeriod = System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt() ?: (60000 * 24 * 3)
+
+val audience = System.getenv("AUDIENCE") ?: "audience"
+val myRealm = System.getenv("REALM") ?: "Access to 'login'"
+val issuer = System.getenv("ISSUER") ?: "ktor"
 
 fun main() {
 
