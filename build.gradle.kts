@@ -37,12 +37,14 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
+    implementation("com.ToxicBakery.library.bcrypt:bcrypt:1.0.9")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     runtimeOnly("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
 
+    implementation("org.jetbrains.exposed:exposed-crypt:$exposed_version")
 
     implementation("io.insert-koin:koin-ktor:$koin_version")
 

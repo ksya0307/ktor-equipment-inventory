@@ -1,5 +1,7 @@
 package com.ksenialexeev.database.tables
 
+import org.jetbrains.exposed.crypt.Encryptor
+import org.jetbrains.exposed.crypt.encryptedVarchar
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID

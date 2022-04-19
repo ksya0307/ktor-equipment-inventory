@@ -1,6 +1,7 @@
 package com.ksenialexeev.mappers
 
 import com.ksenialexeev.database.tables.Comment
+import com.ksenialexeev.mappers.user.UserMapper
 import com.ksenialexeev.models.CommentDto
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

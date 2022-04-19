@@ -2,6 +2,7 @@ package com.ksenialexeev.mappers
 
 import com.ksenialexeev.database.tables.Classroom
 import com.ksenialexeev.database.tables.Classrooms.user
+import com.ksenialexeev.mappers.user.UserMapper
 import com.ksenialexeev.models.ClassroomDto
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
