@@ -49,6 +49,7 @@ fun main() {
 
         val userManager by inject<UserManager>()
 
+        //authentication provider
         install(Authentication) {
             jwt("auth-jwt-admin") {
                 realm = myRealm
@@ -127,9 +128,8 @@ fun main() {
         routing {
             route("api/v1/") {
                 userRouting()
-                authenticate("auth-jwt-reader") {
-                    categoryRouting()
-                }
+
+                categoryRouting()
                 classroomRouting()
 
                 commentRouting()
