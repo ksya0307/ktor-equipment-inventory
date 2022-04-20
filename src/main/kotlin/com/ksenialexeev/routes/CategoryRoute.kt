@@ -11,8 +11,12 @@ import org.koin.ktor.ext.inject
 
 fun Route.categoryRouting() {
     val categoryManager by inject<CategoryManager>()
-        route("categories") {
+    route("categories") {
+        authenticate ("auth-jwt-admin"){
             get {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asInt()
+                val expiresAt = principal.expiresAt?.time?.minus(System.currentTimeMillis())
                 call.respond(
                     call.request.queryParameters.let { params ->
                         println(params.names().map { it to params[it] })
@@ -26,16 +30,18 @@ fun Route.categoryRouting() {
                             )
                         } else {
                             categoryManager.getAll()
+                            call.respondText("Hello, $userId, Token is expired at $expiresAt ms")
                         }
                     }
                 )
             }
-            authenticate("auth-jwt-admin"){
-                delete("{id}") {
-                    call.parameters["id"]?.let { it1 -> categoryManager.delete(it1.toInt()) }
-                        ?.let { it2 -> call.respond(it2) }
-                }
+        }
+        authenticate("auth-jwt-admin") {
+            delete("{id}") {
+                call.parameters["id"]?.let { it1 -> categoryManager.delete(it1.toInt()) }
+                    ?.let { it2 -> call.respond(it2) }
             }
         }
+    }
 
 }

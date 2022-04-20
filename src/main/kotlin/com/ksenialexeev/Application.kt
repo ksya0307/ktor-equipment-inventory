@@ -5,9 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.ksenialexeev.database.initDatabase
 import com.ksenialexeev.database.managers.UserManager
 import com.ksenialexeev.exceptions.NotFoundException
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import com.ksenialexeev.plugins.*
+import com.ksenialexeev.plugins.configureRouting
 import com.ksenialexeev.routes.*
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -16,18 +14,21 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.serialization.json
+import io.ktor.serialization.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import kotlinx.serialization.json.Json
-import org.koin.core.component.KoinComponent
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 
-val accessTokenPeriod = System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt() ?: 60000
-val refreshTokenPeriod = System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt() ?: (60000 * 24 * 3)
+val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: 60000
+val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((60000 * 24 * 3))) ?: (60000 * 24 * 3)
 
-val audience = System.getenv("AUDIENCE") ?: "audience"
-val myRealm = System.getenv("REALM") ?: "Access to 'login'"
-val issuer = System.getenv("ISSUER") ?: "ktor"
+val audience = System.getenv("AUDIENCE")?.toString() ?: "audience"
+val myRealm = System.getenv("REALM")?.toString() ?: "Access to 'login'"
+val issuer = System.getenv("ISSUER")?.toString() ?: "ktor"
+val secret = System.getenv("SECRET")?.toString() ?: "equilibrium"
+val algorithm: Algorithm = Algorithm.HMAC256(secret)!!
 
 fun main() {
 
@@ -35,17 +36,6 @@ fun main() {
 
     //Heroku uses the PORT environment variable
     embeddedServer(Netty, port = System.getenv("PORT")?.toInt() ?: 8080) {
-
-        val json by inject<Json>()
-
-        install(Koin) {
-            modules(jsonModule, mappersModule, managerModule)
-        }
-        install(ContentNegotiation) {
-            json(json)
-        }
-        val secret = System.getenv("SECRET")?.toString() ?: "equilibrium"
-        val algorithm = Algorithm.HMAC256(secret)
 
         val userManager by inject<UserManager>()
 
@@ -68,8 +58,8 @@ fun main() {
                         null
                     }
                 }
-                challenge { defaultScheme, realm ->
-                    call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+                challenge { _,  _ ->
+                    call.respond(HttpStatusCode.Unauthorized, "Access Admin Token is not valid or has expired")
                 }
             }
             jwt("auth-jwt-reader") {
@@ -89,8 +79,8 @@ fun main() {
                         null
                     }
                 }
-                challenge { defaultScheme, realm ->
-                    call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+                challenge { _, _ ->
+                    call.respond(HttpStatusCode.Unauthorized, "Access Reader Token is not valid or has expired")
                 }
             }
             jwt("auth-jwt-refresh") {
@@ -110,10 +100,19 @@ fun main() {
                         null
                     }
                 }
-                challenge { defaultScheme, realm ->
-                    call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+                challenge { _, _ ->
+                    call.respond(HttpStatusCode.Unauthorized, "Refresh Token is not valid or has expired")
                 }
             }
+        }
+
+        val json by inject<Json>()
+
+        install(Koin) {
+            modules(jsonModule, mappersModule, managerModule)
+        }
+        install(ContentNegotiation) {
+            json(json)
         }
 
         install(StatusPages) {
@@ -128,10 +127,8 @@ fun main() {
         routing {
             route("api/v1/") {
                 userRouting()
-
                 categoryRouting()
                 classroomRouting()
-
                 commentRouting()
                 classroomEquipment()
 

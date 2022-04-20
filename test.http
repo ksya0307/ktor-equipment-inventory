@@ -1,7 +1,12 @@
-POST http://localhost:8080/api/v1/login
+POST http://localhost:8080/api/v1/classrooms/1
+
+
+###
+POST https://ktor-equipment-inventory.herokuapp.com/api/v1/login
 Content-Type: application/json
 
 {
   "username": "elena",
   "password": "admin"
 }
+
