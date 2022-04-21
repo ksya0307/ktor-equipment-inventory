@@ -12,7 +12,6 @@ class UserMapper {
         name = user.name,
         patronymic = user.patronymic,
         username = user.username,
-        password = user.password,
         role = user.role
     )
 }

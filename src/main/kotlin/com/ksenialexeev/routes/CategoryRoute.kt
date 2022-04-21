@@ -12,6 +12,7 @@ import org.koin.ktor.ext.inject
 fun Route.categoryRouting() {
     val categoryManager by inject<CategoryManager>()
     route("categories") {
+        authenticate("auth-jwt-admin", "auth-jwt-reader") {
             get {
                 val principal = call.principal<JWTPrincipal>()
                 val userId = principal!!.payload.getClaim("id").asInt()
@@ -33,13 +34,13 @@ fun Route.categoryRouting() {
                         }
                     }
                 )
-        }
-        authenticate("auth-jwt-admin") {
-            delete("{id}") {
-                call.parameters["id"]?.let { it1 -> categoryManager.delete(it1.toInt()) }
-                    ?.let { it2 -> call.respond(it2) }
+            }
+            authenticate("auth-jwt-admin") {
+                delete("{id}") {
+                    call.parameters["id"]?.let { it1 -> categoryManager.delete(it1.toInt()) }
+                        ?.let { it2 -> call.respond(it2) }
+                }
             }
         }
     }
-
 }

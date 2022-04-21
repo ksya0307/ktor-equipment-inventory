@@ -38,5 +38,6 @@ class ClassroomsEquipment(id: EntityID<Int>) : IntEntity(id){
 
 enum class EquipmentBelonging (val type:String) {
     LAB( "Учебно-лабораторное оборудование"),
-    PROD("Учебно-производственное оборудование")
+    PROD("Учебно-производственное оборудование"),
+    OTHER("Другое")
 }

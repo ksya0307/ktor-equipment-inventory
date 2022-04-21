@@ -28,4 +28,4 @@ class User(id:EntityID<Int>):IntEntity(id){
     var role by Users.role
 }
 
-enum class Role { ADMIN, READER }
+enum class Role { MODERATOR, READER }

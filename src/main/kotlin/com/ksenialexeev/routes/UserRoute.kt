@@ -19,29 +19,41 @@ import java.util.*
 
 fun Route.userRouting() {
     val userManager by inject<UserManager>()
+
+    route("users") {
+        authenticate("auth-jwt-admin", "auth-jwt-reader") {
+            get("{id}") {
+                call.parameters["id"]?.toInt()?.let { it1 -> userManager.getUser(it1) }
+                    ?.let { it2 -> call.respond(it2) }
+            }
+        }
+    }
+
     route("sign_up") {
         post {
             val newUser = call.receive<CreateUserDto>()
             val user = userManager.signup(newUser)
-            call.respondText("User been created ${newUser.surname}, ${newUser.name}, ${newUser.patronymic}," +
-                    " ${newUser.username}, ${newUser.password}")
+            call.respondText(
+                "User been created ${newUser.surname}, ${newUser.name}, ${newUser.patronymic}," +
+                        " ${newUser.username}, ${newUser.password}"
+            )
         }
     }
     route("login") {
         post {
             val authUser = call.receive<UserLoginDto>()
             val user = userManager.login(authUser.username, authUser.password)
-                println("$user id")
-                val access = JWT.create().withAudience(audience).withIssuer(issuer)
-                    .withClaim("id", userManager.login(authUser.username, authUser.password))
-                    .withExpiresAt(Date(System.currentTimeMillis() + accessTokenPeriod))
-                    .sign(algorithm)
-                println("$access что тут")
-                val refresh = JWT.create().withAudience(audience).withIssuer(issuer)
-                    .withClaim("id", userManager.login(authUser.username, authUser.password))
-                    .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
-                    .sign(algorithm)
-                call.respond(TokenPair(access, refresh))
+            println("$user id")
+            val access = JWT.create().withAudience(audience).withIssuer(issuer)
+                .withClaim("id", userManager.login(authUser.username, authUser.password))
+                .withExpiresAt(Date(System.currentTimeMillis() + accessTokenPeriod))
+                .sign(algorithm)
+            println("$access что тут")
+            val refresh = JWT.create().withAudience(audience).withIssuer(issuer)
+                .withClaim("id", userManager.login(authUser.username, authUser.password))
+                .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
+                .sign(algorithm)
+            call.respond(TokenPair(access, refresh))
 
         }
 

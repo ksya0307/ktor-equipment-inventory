@@ -10,7 +10,6 @@ data class UserDto(
     val name: String,
     val patronymic: String,
     val username: String,
-    val password: String,
     val role: Role
 ) {
     val fullName = "$surname $name $patronymic"
@@ -30,6 +29,3 @@ data class UserLoginDto(val username: String, val password: String)
 
 @Serializable
 data class TokenPair(val accessToken: String, val refreshToken: String)
-
-@Serializable
-data class RefreshToken(val refreshToken: String)
