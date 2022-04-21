@@ -1,7 +1,6 @@
 package com.ksenialexeev.mappers
 
 import com.ksenialexeev.database.tables.Inventory
-import com.ksenialexeev.mappers.user.UserMapper
 import com.ksenialexeev.models.InventoryDto
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

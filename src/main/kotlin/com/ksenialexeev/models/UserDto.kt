@@ -9,10 +9,21 @@ data class UserDto(
     val surname: String,
     val name: String,
     val patronymic: String,
+    val username: String,
+    val password: String,
     val role: Role
 ) {
     val fullName = "$surname $name $patronymic"
 }
+
+@Serializable
+data class CreateUserDto(
+    val surname: String,
+    val name: String,
+    val patronymic: String,
+    val username: String,
+    val password: String,
+)
 
 @Serializable
 data class UserLoginDto(val username: String, val password: String)

@@ -45,7 +45,8 @@ fun main() {
                 realm = myRealm
                 //для верификации токена что он не expired, что он сгененирован этим сервером
                 verifier(
-                    JWT.require(algorithm)
+                    JWT
+                        .require(algorithm)
                         .withAudience(audience)
                         .withIssuer(issuer)
                         .build()
@@ -58,8 +59,8 @@ fun main() {
                         null
                     }
                 }
-                challenge { _,  _ ->
-                    call.respond(HttpStatusCode.Unauthorized, "Access Admin Token is not valid or has expired")
+                challenge { defaultScheme, realm->
+                    call.respond(HttpStatusCode.Unauthorized, "Access Token is not valid or has expired")
                 }
             }
             jwt("auth-jwt-reader") {
@@ -80,7 +81,7 @@ fun main() {
                     }
                 }
                 challenge { _, _ ->
-                    call.respond(HttpStatusCode.Unauthorized, "Access Reader Token is not valid or has expired")
+                    call.respond(HttpStatusCode.Unauthorized, "Access Token is not valid or has expired")
                 }
             }
             jwt("auth-jwt-refresh") {

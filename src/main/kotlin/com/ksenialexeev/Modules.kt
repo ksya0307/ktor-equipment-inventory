@@ -3,8 +3,9 @@ package com.ksenialexeev
 import com.ksenialexeev.database.managers.*
 import com.ksenialexeev.mappers.CategoryMapper
 import com.ksenialexeev.mappers.ClassroomMapper
-import com.ksenialexeev.mappers.user.UserMapper
-import com.ksenialexeev.mappers.user.UserLoginMapper
+import com.ksenialexeev.mappers.UserMapper
+import com.ksenialexeev.mappers.UserLoginMapper
+import com.ksenialexeev.mappers.CreateUserMapper
 import com.ksenialexeev.mappers.InventoryMapper
 import com.ksenialexeev.mappers.CommentMapper
 import com.ksenialexeev.mappers.ClassroomEquipmentMapper
@@ -34,6 +35,7 @@ val mappersModule = module {
     singleOf(::InventoryMapper)
     singleOf(::ClassroomEquipmentMapper)
     singleOf(::UserLoginMapper)
+    singleOf(::CreateUserMapper)
 }
 
 val managerModule = module {

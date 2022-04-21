@@ -14,7 +14,7 @@ object Users:IntIdTable(){
     val patronymic = varchar("patronymic",64)
     val username = varchar("username",64)
     val password = text("password")
-    val role = enumeration("role", Role::class)
+    val role = enumeration("role", Role::class).default(Role.READER)
 }
 
 class User(id:EntityID<Int>):IntEntity(id){
