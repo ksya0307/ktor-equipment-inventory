@@ -44,10 +44,7 @@ class UserManagerImpl : UserManager, KoinComponent {
     override suspend fun login(username: String, password: String) = newSuspendedTransaction(Dispatchers.IO) {
         User.find {
             (Users.username eq username)
-        }.firstOrNull { Bcrypt.verify(password, it.password) }?.id?.value ?: throw NotFoundException(
-            "User",
-            "$username $password"
-        )
+        }.firstOrNull { Bcrypt.verify(password, it.password) }?.id?.value ?: throw Exception()
     }
 
     override suspend fun check(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
