@@ -28,4 +28,4 @@ data class CreateUserDto(
 data class UserLoginDto(val username: String, val password: String)
 
 @Serializable
-data class TokenPair(val accessToken: String, val refreshToken: String)
+data class TokenPair(val accessToken: String, val refreshToken: String, val userId:Int)

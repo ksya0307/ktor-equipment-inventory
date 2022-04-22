@@ -53,7 +53,7 @@ fun Route.userRouting() {
                 .withClaim("id", userManager.login(authUser.username, authUser.password))
                 .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
                 .sign(algorithm)
-            call.respond(TokenPair(access, refresh))
+            call.respond(TokenPair(access, refresh, user))
 
         }
 
@@ -69,7 +69,7 @@ fun Route.userRouting() {
             val refresh = JWT.create().withAudience(audience).withIssuer(issuer).withClaim("id", userId)
                 .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
                 .sign(algorithm)
-            call.respond(TokenPair(access, refresh))
+            call.respond(TokenPair(access, refresh, userId))
         }
     }
 
