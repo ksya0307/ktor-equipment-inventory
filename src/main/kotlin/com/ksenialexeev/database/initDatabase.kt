@@ -31,7 +31,8 @@ fun initDatabase() {
             Comments,
             Equipments,
             Inventories,
-            Users
+            Users,
+            Repairs
         )
     }
 }
