@@ -37,7 +37,8 @@ class ClassroomsEquipment(id: EntityID<Int>) : IntEntity(id){
 }
 
 enum class EquipmentBelonging (val type:String) {
-    LAB( "Учебно-лабораторное оборудование"),
-    PROD("Учебно-производственное оборудование"),
-    OTHER("Другое")
+    LAB( "Учебно-лабораторное оборудование"),//14byte+4
+    PROD("Учебно-производственное оборудование"),//14byte+4
+    OTHER("Другое")//6byte+4 = 46bytes = 0.044..
+    //40kb = 40960bytes
 }

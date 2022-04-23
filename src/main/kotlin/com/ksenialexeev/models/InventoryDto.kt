@@ -11,6 +11,5 @@ data class InventoryDto(
     val document: String,
     val ifo:String,
     val for_classroom: ClassroomDto,
-    val responsible_person: UserDto,
     val given: Boolean
 )

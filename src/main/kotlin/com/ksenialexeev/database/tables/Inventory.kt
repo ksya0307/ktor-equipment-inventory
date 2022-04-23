@@ -24,12 +24,6 @@ object Inventories:IntIdTable("inventory"){
         onUpdate = ReferenceOption.CASCADE,
         onDelete = ReferenceOption.CASCADE
     )
-    val responsible_person = reference(
-        "responsible_person",
-        Users,
-        onUpdate = ReferenceOption.CASCADE,
-        onDelete = ReferenceOption.CASCADE
-    )
 }
 class Inventory (id: EntityID<Int>) : IntEntity(id){
     companion object: EntityClass<Int, Inventory>(Inventories)
@@ -40,5 +34,4 @@ class Inventory (id: EntityID<Int>) : IntEntity(id){
     var document by Inventories.document
     var ifo by Inventories.ifo
     var for_classroom by Classroom referencedOn Inventories.for_classroom
-    var responsible_person by User referencedOn Inventories.responsible_person
 }

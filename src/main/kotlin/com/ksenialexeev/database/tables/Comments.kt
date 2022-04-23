@@ -1,13 +1,11 @@
 package com.ksenialexeev.database.tables
 
-import com.ksenialexeev.database.tables.Comment.Companion.referrersOn
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
-import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object Comments: IntIdTable(){
     val inventory = reference(

@@ -18,7 +18,6 @@ class InventoryMapper : KoinComponent {
         document = inventory.document,
         ifo = inventory.ifo,
         for_classroom = classroomMapper(classroom = inventory.for_classroom),
-        responsible_person = userMapper(user = inventory.responsible_person),
         given = it
         )
     }
