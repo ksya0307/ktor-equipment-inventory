@@ -19,8 +19,8 @@ import org.koin.dsl.module
 val jsonModule = module {
     single {
         Json {
-            isLenient = true
-            prettyPrint = true
+            isLenient = true //расширяет диапазон значений типа данных
+            prettyPrint = true //json ответ выглядит в соответствии со стилем, табулирован, подсвечен
             ignoreUnknownKeys = true
         }
     }

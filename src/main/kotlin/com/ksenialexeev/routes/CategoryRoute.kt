@@ -35,11 +35,11 @@ fun Route.categoryRouting() {
                     }
                 )
             }
-            authenticate("auth-jwt-admin") {
-                delete("{id}") {
-                    call.parameters["id"]?.let { it1 -> categoryManager.delete(it1.toInt()) }
-                        ?.let { it2 -> call.respond(it2) }
-                }
+        }
+        authenticate("auth-jwt-admin") {
+            delete("{id}") {
+                call.parameters["id"]?.let { it1 -> categoryManager.delete(it1.toInt()) }
+                    ?.let { it2 -> call.respond(it2) }
             }
         }
     }

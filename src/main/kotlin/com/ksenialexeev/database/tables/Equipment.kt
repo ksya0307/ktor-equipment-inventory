@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 
 
-object Equipments: IntIdTable(){
+object Equipments: IntIdTable("equipment"){
     val description = text("description")
     val category = reference(
         "category",
