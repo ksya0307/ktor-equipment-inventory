@@ -64,15 +64,15 @@ class UserManagerImpl : UserManager, KoinComponent {
     }
 
     override suspend fun checkModerator(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
-        User.findById(id)?.let { it.role == Role.MODERATOR } ?: false
+        User.findById(id)?.let { it.role == Role.moderator } ?: false
     }
 
     override suspend fun checkAdmin(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
-        User.findById(id)?.let { it.role == Role.ADMIN } ?: false
+        User.findById(id)?.let { it.role == Role.admin } ?: false
     }
 
     override suspend fun checkReader(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
-        User.findById(id)?.let { it.role == Role.READER } ?: false
+        User.findById(id)?.let { it.role == Role.reader } ?: false
     }
 
     override suspend fun getUser(id: Int): UserDto  = newSuspendedTransaction(Dispatchers.IO) {
