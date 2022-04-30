@@ -114,6 +114,12 @@ DONE
 6 -- Inventory
 Удаление данных учёта
 
+--------------------------------- UPDATE ---------------------------------
+
+DONE
+1 -- Users
+Изменение данных пользователя
+
 Все запросы:
 GET /api/v1/classroom-equipment
 GET /api/v1/classrooms

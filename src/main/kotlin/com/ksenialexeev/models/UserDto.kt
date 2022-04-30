@@ -1,6 +1,7 @@
 package com.ksenialexeev.models
 
 import com.ksenialexeev.database.tables.Role
+import com.ksenialexeev.database.tables.Users
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,7 +28,11 @@ data class CreateUserDto(
 @Serializable
 data class ChangeUserRoleDto(
     val id: Int,
-    val role: Role
+    val surname: String? = null,
+    val name: String? = null,
+    val patronymic: String? = null,
+    val username: String? = null,
+    val role: Role? = null
 )
 
 @Serializable

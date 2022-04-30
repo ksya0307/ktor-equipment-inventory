@@ -12,7 +12,7 @@ import org.koin.ktor.ext.inject
 fun Route.equipmentRouting() {
     val equipmentManager by inject<EquipmentManager>()
     route("equipment") {
-        authenticate("auth-jwt-reader", "auth-jwt-moderator") {
+        authenticate("auth-jwt-reader", "auth-jwt-moderator", "auth-jwt-admin") {
             get {
                 call.respond(equipmentManager.getAll())
             }
@@ -21,7 +21,7 @@ fun Route.equipmentRouting() {
                     ?.let { it2 -> call.respond(it2) }
             }
         }
-        authenticate("auth-jwt-admin") {
+        authenticate("auth-jwt-moderator","auth-jwt-admin") {
             post {
                 val newEquipment = call.receive<CreateEquipmentDto>()
                 val equipment = equipmentManager.create(newEquipment)

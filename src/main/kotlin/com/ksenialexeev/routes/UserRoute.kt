@@ -25,8 +25,8 @@ fun Route.userRouting() {
         authenticate("auth-jwt-admin") {
             put {
                 val userData = call.receive<ChangeUserRoleDto>()
-                val user = userManager.changeRole(userData.id, userData.role)
-                call.respondText("User with ${userData.id} changed to role ${user.role}")
+                val user = userManager.changeRole(userData.id, userData.role, userData.surname, userData.name, userData.patronymic)
+                call.respondText("User with ${userData.id} changed")
             }
         }
 

@@ -27,7 +27,7 @@ interface UserManager {
     suspend fun checkReader(id: Int): Boolean
     suspend fun checkAdmin(id:Int):Boolean
     suspend fun getUser(id: Int): UserDto
-    suspend fun changeRole(id: Int, role: Role): UserDto
+    suspend fun changeRole(id: Int, role: Role?, surname: String?, name:String?, patronymic:String?): UserDto
 }
 
 class UserManagerImpl : UserManager, KoinComponent {
@@ -79,11 +79,22 @@ class UserManagerImpl : UserManager, KoinComponent {
         User.findById(id)?.let{  mapperGetUser(it) } ?: throw NotFoundException("User", id)
     }
 
-    override suspend fun changeRole(id: Int, role: Role): UserDto =  newSuspendedTransaction(Dispatchers.IO)  {
+    override suspend fun changeRole(id: Int, role: Role?, surname: String?, name:String?, patronymic:String?): UserDto =  newSuspendedTransaction(Dispatchers.IO)  {
         User.findById(id)?.let {
-            it.role = role
+            if (role != null) {
+                it.role = role
+            }
+            if (surname != null) {
+                it.surname = surname
+            }
+            if (name != null) {
+                it.name = name
+            }
+            if (patronymic != null) {
+                it.patronymic = patronymic
+            }
             mapperGetUser(it)
-        } ?: throw NotFoundException("Change role of User", id)
+        } ?: throw NotFoundException("Changes of User", id)
     }
 
 }
