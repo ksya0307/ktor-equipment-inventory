@@ -54,4 +54,7 @@ val managerModule = module {
     singleOf(::UserManagerImpl){
         bind<UserManager>()
     }
+    singleOf(::EquipmentManagerImpl){
+        bind<EquipmentManager>()
+    }
 }

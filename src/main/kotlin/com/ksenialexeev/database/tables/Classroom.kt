@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
-object Classrooms: IdTable<String>(){
+object Classrooms: IdTable<String>("classrooms"){
     override val id: Column<EntityID<String>> = varchar("number",10).entityId()
     val user = reference(
         "user", Users,

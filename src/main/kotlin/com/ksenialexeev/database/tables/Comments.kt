@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object Comments: IntIdTable(){
+object Comments: IntIdTable("comments"){
     val inventory = reference(
         "inventory",
         Inventories,

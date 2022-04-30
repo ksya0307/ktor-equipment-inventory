@@ -25,6 +25,12 @@ data class CreateUserDto(
 )
 
 @Serializable
+data class ChangeUserRoleDto(
+    val id: Int,
+    val role: Role
+)
+
+@Serializable
 data class UserLoginDto(val username: String, val password: String)
 
 @Serializable

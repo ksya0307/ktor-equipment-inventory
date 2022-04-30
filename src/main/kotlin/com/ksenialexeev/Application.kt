@@ -21,7 +21,7 @@ import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 
-val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: 60000
+val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: (60000 * 5)
 val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((60000 * 24 * 3))) ?: (60000 * 24 * 3)
 
 val audience = System.getenv("AUDIENCE")?.toString() ?: "audience"
@@ -53,6 +53,28 @@ fun main() {
                 )
                 validate { credential ->
                     if (userManager.checkAdmin(credential.payload.getClaim("id").asInt())) {
+                        //состоит из payload - то ЧТО будет хранить JWT - данные юзера
+                        JWTPrincipal(credential.payload)
+                    } else {
+                        null
+                    }
+                }
+                challenge { defaultScheme, realm->
+                    call.respond(HttpStatusCode.Unauthorized, "Access Token is not valid or has expired")
+                }
+            }
+            jwt("auth-jwt-moderator") {
+                realm = myRealm
+                //для верификации токена что он не expired, что он сгененирован этим сервером
+                verifier(
+                    JWT
+                        .require(algorithm)
+                        .withAudience(audience)
+                        .withIssuer(issuer)
+                        .build()
+                )
+                validate { credential ->
+                    if (userManager.checkModerator(credential.payload.getClaim("id").asInt())) {
                         //состоит из payload - то ЧТО будет хранить JWT - данные юзера
                         JWTPrincipal(credential.payload)
                     } else {
@@ -132,7 +154,7 @@ fun main() {
                 classroomRouting()
                 commentRouting()
                 classroomEquipment()
-
+                equipmentRouting()
             }
         }
 

@@ -6,6 +6,5 @@ import com.ksenialexeev.models.CategoryDto
 class CategoryMapper {
     operator fun invoke(category:Category) = CategoryDto(
         name = category.name,
-        id = category.id.value
     )
 }

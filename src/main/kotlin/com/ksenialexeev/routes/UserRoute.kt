@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.ksenialexeev.*
 import com.ksenialexeev.database.managers.UserManager
+import com.ksenialexeev.models.ChangeUserRoleDto
 import com.ksenialexeev.models.CreateUserDto
 import com.ksenialexeev.models.TokenPair
 import com.ksenialexeev.models.UserLoginDto
@@ -21,7 +22,15 @@ fun Route.userRouting() {
     val userManager by inject<UserManager>()
 
     route("users") {
-        authenticate("auth-jwt-admin", "auth-jwt-reader") {
+        authenticate("auth-jwt-admin") {
+            put {
+                val userData = call.receive<ChangeUserRoleDto>()
+                val user = userManager.changeRole(userData.id, userData.role)
+                call.respondText("User with ${userData.id} changed to role ${user.role}")
+            }
+        }
+
+        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
             get("{id}") {
                 call.parameters["id"]?.toInt()?.let { it1 -> userManager.getUser(it1) }
                     ?.let { it2 -> call.respond(it2) }

@@ -11,7 +11,7 @@ fun Route.classroomEquipment() {
     route("classroom-equipment") {
         get {
             call.respond(
-                classroomEquipmentManager.getAllClassroomEquipment(
+                classroomEquipmentManager.getAllClassroomEquipmentByClassroomAndCategory(
                     call.request.queryParameters["classroom"],
                     call.request.queryParameters["equipment"]
                 )

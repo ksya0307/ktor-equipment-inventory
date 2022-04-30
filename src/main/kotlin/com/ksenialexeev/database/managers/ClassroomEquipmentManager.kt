@@ -11,12 +11,12 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ClassroomEquipmentManager {
-    suspend fun getAllClassroomEquipment(classroom: String?, equipmentCategory: String?): List<ClassroomEquipmentDto>
+    suspend fun getAllClassroomEquipmentByClassroomAndCategory(classroom: String?, equipmentCategory: String?): List<ClassroomEquipmentDto>
 }
 
 class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
     private val mapper by inject<ClassroomEquipmentMapper>()
-    override suspend fun getAllClassroomEquipment(
+    override suspend fun getAllClassroomEquipmentByClassroomAndCategory(
         classroom: String?,
         equipmentCategory: String?
     ): List<ClassroomEquipmentDto> =

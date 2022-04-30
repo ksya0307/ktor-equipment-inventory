@@ -71,7 +71,7 @@ fun Application.userRouting() {
                     .build()
             )
             validate { credential ->
-                if (userManager.checkAdmin(credential.payload.getClaim("id").asInt())) {
+                if (userManager.checkModerator(credential.payload.getClaim("id").asInt())) {
                     //состоит из payload - то ЧТО будет хранить JWT - данные юзера
                     JWTPrincipal(credential.payload)
                 } else {

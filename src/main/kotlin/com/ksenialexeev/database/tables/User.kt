@@ -1,7 +1,5 @@
 package com.ksenialexeev.database.tables
 
-import org.jetbrains.exposed.crypt.Encryptor
-import org.jetbrains.exposed.crypt.encryptedVarchar
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -14,7 +12,7 @@ object Users:IntIdTable("users"){
     val patronymic = varchar("patronymic",64)
     val username = varchar("username",64)
     val password = text("password")
-    val role = enumeration("role", Role::class).default(Role.READER)
+    val role = enumeration("role", Role::class).default(Role.COMMON)
 }
 
 class User(id:EntityID<Int>):IntEntity(id){
@@ -28,4 +26,5 @@ class User(id:EntityID<Int>):IntEntity(id){
     var role by Users.role
 }
 
-enum class Role { MODERATOR, READER }
+enum class Role { ADMIN, MODERATOR, READER, COMMON }
+//0 1 2 3

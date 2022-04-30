@@ -113,3 +113,20 @@ DONE
 
 6 -- Inventory
 Удаление данных учёта
+
+Все запросы:
+GET /api/v1/classroom-equipment
+GET /api/v1/classrooms
+GET /api/v1/classrooms/{user-id}
+GET /api/v1/comments
+GET /api/v1/comments/{inventory-id}}
+POST /api/v1/login
+POST /api/v1/sign_up
+GET /api/v1/categories
+DELETE /api/v1/categories/{id}
+GET /api/v1/equipment
+GET /api/v1/equipment/{id}
+POST /api/v1/equipment
+GET /api/v1/users/{id}
+GET /api/v1/refresh
+PUT /api/v1/users

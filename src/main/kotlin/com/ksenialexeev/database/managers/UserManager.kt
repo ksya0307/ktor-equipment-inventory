@@ -23,9 +23,11 @@ interface UserManager {
     suspend fun login(username: String, password: String): Int
     suspend fun check(id: Int): Boolean
     suspend fun signup(dto: CreateUserDto): UserLoginDto
-    suspend fun checkAdmin(id: Int): Boolean
+    suspend fun checkModerator(id: Int): Boolean
     suspend fun checkReader(id: Int): Boolean
+    suspend fun checkAdmin(id:Int):Boolean
     suspend fun getUser(id: Int): UserDto
+    suspend fun changeRole(id: Int, role: Role): UserDto
 }
 
 class UserManagerImpl : UserManager, KoinComponent {
@@ -61,8 +63,12 @@ class UserManagerImpl : UserManager, KoinComponent {
         }.let(mapper::invoke)
     }
 
-    override suspend fun checkAdmin(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun checkModerator(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { it.role == Role.MODERATOR } ?: false
+    }
+
+    override suspend fun checkAdmin(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+        User.findById(id)?.let { it.role == Role.ADMIN } ?: false
     }
 
     override suspend fun checkReader(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
@@ -71,6 +77,13 @@ class UserManagerImpl : UserManager, KoinComponent {
 
     override suspend fun getUser(id: Int): UserDto  = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let{  mapperGetUser(it) } ?: throw NotFoundException("User", id)
+    }
+
+    override suspend fun changeRole(id: Int, role: Role): UserDto =  newSuspendedTransaction(Dispatchers.IO)  {
+        User.findById(id)?.let {
+            it.role = role
+            mapperGetUser(it)
+        } ?: throw NotFoundException("Change role of User", id)
     }
 
 }
