@@ -25,12 +25,18 @@ fun Route.userRouting() {
         authenticate("auth-jwt-admin") {
             put {
                 val userData = call.receive<ChangeUserRoleDto>()
-                val user = userManager.changeRole(userData.id, userData.role, userData.surname, userData.name, userData.patronymic)
+                val user = userManager.changeRole(
+                    userData.id,
+                    userData.role,
+                    userData.surname,
+                    userData.name,
+                    userData.patronymic
+                )
                 call.respondText("User with ${userData.id} changed")
             }
         }
 
-        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
+        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin", "auth-jwt-common") {
             get("{id}") {
                 call.parameters["id"]?.toInt()?.let { it1 -> userManager.getUser(it1) }
                     ?.let { it2 -> call.respond(it2) }

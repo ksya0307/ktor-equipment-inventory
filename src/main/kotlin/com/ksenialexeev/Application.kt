@@ -106,6 +106,27 @@ fun main() {
                     call.respond(HttpStatusCode.Unauthorized, "Access Token is not valid or has expired")
                 }
             }
+            jwt("auth-jwt-common") {
+                realm = myRealm
+                //для верификации токена что он не expired, что он сгененирован этим сервером
+                verifier(
+                    JWT.require(algorithm)
+                        .withAudience(audience)
+                        .withIssuer(issuer)
+                        .build()
+                )
+                validate { credential ->
+                    if (userManager.checkCommon(credential.payload.getClaim("id").asInt())) {
+                        //состоит из payload - то ЧТО будет хранить JWT - данные юзера
+                        JWTPrincipal(credential.payload)
+                    } else {
+                        null
+                    }
+                }
+                challenge { _, _ ->
+                    call.respond(HttpStatusCode.Unauthorized, "Access Token is not valid or has expired")
+                }
+            }
             jwt("auth-jwt-refresh") {
                 realm = myRealm
                 //для верификации токена что он не expired, что он сгененирован этим сервером

@@ -26,6 +26,7 @@ interface UserManager {
     suspend fun checkModerator(id: Int): Boolean
     suspend fun checkReader(id: Int): Boolean
     suspend fun checkAdmin(id:Int):Boolean
+    suspend fun checkCommon(id: Int): Boolean
     suspend fun getUser(id: Int): UserDto
     suspend fun changeRole(id: Int, role: Role?, surname: String?, name:String?, patronymic:String?): UserDto
 }
@@ -73,6 +74,9 @@ class UserManagerImpl : UserManager, KoinComponent {
 
     override suspend fun checkReader(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { it.role == Role.reader } ?: false
+    }
+    override suspend fun checkCommon(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+        User.findById(id)?.let { it.role == Role.common } ?: false
     }
 
     override suspend fun getUser(id: Int): UserDto  = newSuspendedTransaction(Dispatchers.IO) {
