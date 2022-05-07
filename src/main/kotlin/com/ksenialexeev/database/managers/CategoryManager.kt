@@ -47,6 +47,29 @@ class CategoryManagerImpl : CategoryManager(), KoinComponent {
 
     }
 
+    override suspend fun getPage(
+        page: Long,
+        size: Int?,
+        sortDirection: SortOrder,
+        sortByColumn: String?
+    ): String = suspendedTransactionAsync {
+        val column = table.columns.singleOrNull { it.name == sortByColumn }
+        val query = table
+            .selectAll()
+            .orderBy(column ?: table.columns.first(), sortDirection)
+        if (size != null) {
+            query.limit(size, page * size)
+        }
+        //query.forEach { println(it[column]) }
+        Paging(
+            page, size ?: 0, sortDirection, sortByColumn,
+            query.count(),
+            query.map(mapper::invoke)
+        ).let {
+            Json.encodeToString(it)
+        }
+    }.await()
+
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
             Category.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw NotFoundException("Category", id)
     }

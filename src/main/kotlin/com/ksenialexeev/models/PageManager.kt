@@ -12,11 +12,11 @@ import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.Table
 
 
-abstract class PageManager<Model>(
+abstract class PageManager<Model : Any>(
     open val table: Table,
     open val mapper: OneWayMapper<ResultRow, Model>
 ) : IPageManger<Model> {
-    override suspend fun getPage(
+    /*override suspend fun getPage(
         page: Long,
         size: Int?,
         sortDirection: SortOrder,
@@ -31,14 +31,15 @@ abstract class PageManager<Model>(
         if (size != null) {
             query.limit(size, page * size)
         }
-        query.forEach { println(it[column]) }
-        Paging<Model>(
-            page, size, sortDirection, sortByColumn
-        ).apply {
-            sizeResult = query.count()
-            result = query.map(mapper::invoke)
+        //query.forEach { println(it[column]) }
+        Paging(
+            page, size ?: 0, sortDirection, sortByColumn,
+            query.count(),
+            query.map(mapper::invoke)
+        ).also {
+            //Json.encodeToString(Paging<Model>::class.serializer(), it).let(::println)
         }
-    }.await()
+    }.await()*/
 }
 
 interface OneWayMapper<in Input, out Output> {
@@ -50,16 +51,31 @@ interface IPageManger<Model> {
         page: Long = 0,
         size: Int? = null,
         sortDirection: SortOrder = SortOrder.ASC,
-        sortByColumn: String = ""
-    ): Paging<Model>
+        sortByColumn: String? = null
+    ): String
 }
 
+class SortOrderSerializer() : KSerializer<SortOrder> {
+    override fun deserialize(decoder: Decoder): SortOrder {
+        return SortOrder.valueOf(decoder.decodeString())
+    }
+
+    override fun serialize(encoder: Encoder, value: SortOrder) {
+        encoder.encodeString(value.name)
+    }
+
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SortOrder", PrimitiveKind.STRING)
+
+}
+
+
 @Serializable
-data class Paging<T>(
+data class Paging<T: Any>(
     val page: Long = 0,
-    val size: Int? = null,
+    val size: Int = 0,
+    @Serializable(with = SortOrderSerializer::class)
     val sortDirection: SortOrder = SortOrder.ASC,
-    val sortByColumn: String = "",
-    var sizeResult: Long? = null,
-    var result: List<T>? = null
+    val sortByColumn: String? = null,
+    val sizeResult: Long = 0L,
+    val result: List<T> = emptyList()
 )

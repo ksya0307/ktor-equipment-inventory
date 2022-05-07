@@ -4,14 +4,17 @@ import com.ksenialexeev.database.managers.CategoryManager
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.SortOrder
 import org.koin.ktor.ext.inject
+import kotlinx.serialization.encodeToString
 
 fun Route.categoryRouting() {
     val categoryManager by inject<CategoryManager>()
+    val json by inject<Json>()
     route("categories") {
         authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
             get {
@@ -20,16 +23,16 @@ fun Route.categoryRouting() {
                         println(params.names().map { it to params[it] })
                         if (params.contains("size")) {
                             categoryManager.getPage(
-                                page = params["page"]?.toLong() ?: throw Exception("Missing page"),
-                                size = params["size"]?.toInt() ?: throw Exception("Missing size"),
+                                page = params["page"]?.toLong() ?: 0,
+                                size = params["size"]?.toInt() ?: 10,
                                 sortDirection = params["sortDirection"]?.let { SortOrder.valueOf(it) }
-                                    ?: throw Exception("Missing/invalid sortDirection"),
-                                sortByColumn = params["sortByColumn"] ?: throw Exception("Missing/invalid sortByColumn")
+                                    ?: SortOrder.ASC,
+                                sortByColumn = params["sortByColumn"]
                             )
                         } else {
                             json.encodeToString(categoryManager.getAll())
                         }
-                    }
+                    }, contentType = ContentType.Application.Json
                 )
             }
         }
