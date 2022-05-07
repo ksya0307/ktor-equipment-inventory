@@ -6,6 +6,7 @@ import com.ksenialexeev.database.tables.Inventory
 import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.CommentMapper
 import com.ksenialexeev.models.CommentDto
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
@@ -14,6 +15,7 @@ import org.koin.core.component.inject
 interface CommentManager {
     suspend fun getAllComments(): List<CommentDto>
     suspend fun getCommentByInventory(id: Int): List<CommentDto>
+    suspend fun delete(id: Int):HttpStatusCode
 }
 
 class CommentManagerImpl : CommentManager, KoinComponent {
@@ -28,6 +30,10 @@ class CommentManagerImpl : CommentManager, KoinComponent {
         Comment.find{
             Comments.inventory eq inventory.id
         }.map(mapper::invoke)
+    }
+
+    override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
+        Comment.findById(id)?.let { it.delete();HttpStatusCode.OK }?: throw NotFoundException("Comment",id)
     }
 
 }

@@ -20,5 +20,12 @@ fun Route.commentRouting() {
                     ?.let { it2 -> call.respond(it2) }
             }
         }
+        authenticate("auth-jwt-moderator","auth-jwt-admin"){
+            delete("{id}"){
+                call.parameters["id"]?.let { commentManager.delete(it.toInt()) }
+                    ?.let { call.respondText("Comment with id ${call.parameters["id"]} deleted") }
+
+            }
+        }
     }
 }

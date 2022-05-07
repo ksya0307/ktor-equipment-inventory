@@ -7,6 +7,7 @@ import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.EquipmentMapper
 import com.ksenialexeev.models.CreateEquipmentDto
 import com.ksenialexeev.models.EquipmentDto
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
@@ -16,6 +17,7 @@ interface EquipmentManager {
     suspend fun getById(id: Int): EquipmentDto
     suspend fun create(dto: CreateEquipmentDto): EquipmentDto
     suspend fun getAll(): List<EquipmentDto>
+    suspend fun delete(id: Int):HttpStatusCode
 }
 
 class EquipmentManagerImpl : EquipmentManager, KoinComponent {
@@ -35,8 +37,12 @@ class EquipmentManagerImpl : EquipmentManager, KoinComponent {
         }.let(mapper::invoke)
     }
 
-    override suspend fun getAll(): List<EquipmentDto> = newSuspendedTransaction(Dispatchers.IO){
+    override suspend fun getAll() = newSuspendedTransaction(Dispatchers.IO){
         Equipment.all().map(mapper::invoke)
+    }
+
+    override suspend fun delete(id: Int)= newSuspendedTransaction(Dispatchers.IO) {
+        Equipment.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw NotFoundException("Equipment", id)
     }
 
 }

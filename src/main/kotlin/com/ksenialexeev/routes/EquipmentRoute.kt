@@ -21,11 +21,16 @@ fun Route.equipmentRouting() {
                     ?.let { it2 -> call.respond(it2) }
             }
         }
-        authenticate("auth-jwt-moderator","auth-jwt-admin") {
+        authenticate("auth-jwt-moderator", "auth-jwt-admin") {
             post {
                 val newEquipment = call.receive<CreateEquipmentDto>()
                 val equipment = equipmentManager.create(newEquipment)
                 call.respondText("Equipment been created ${newEquipment.description}, ${newEquipment.category.name}")
+            }
+            delete("{id}") {
+                call.parameters["id"]?.let { equipmentManager.delete(it.toInt()) }
+                    ?.let { call.respondText("Equipment with Id ${call.parameters["id"]} deleted") }
+
             }
         }
     }

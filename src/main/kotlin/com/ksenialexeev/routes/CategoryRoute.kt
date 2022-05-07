@@ -6,6 +6,7 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.SortOrder
 import org.koin.ktor.ext.inject
 
@@ -14,10 +15,7 @@ fun Route.categoryRouting() {
     route("categories") {
         authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
             get {
-                val principal = call.principal<JWTPrincipal>()
-                val userId = principal!!.payload.getClaim("id").asInt()
-                val expiresAt = principal.expiresAt?.time?.minus(System.currentTimeMillis())
-                call.respond(
+                call.respondText(
                     call.request.queryParameters.let { params ->
                         println(params.names().map { it to params[it] })
                         if (params.contains("size")) {
@@ -29,8 +27,7 @@ fun Route.categoryRouting() {
                                 sortByColumn = params["sortByColumn"] ?: throw Exception("Missing/invalid sortByColumn")
                             )
                         } else {
-                            categoryManager.getAll()
-                            call.respondText("Hello, $userId, Token is expired at $expiresAt ms")
+                            json.encodeToString(categoryManager.getAll())
                         }
                     }
                 )
@@ -38,8 +35,9 @@ fun Route.categoryRouting() {
         }
         authenticate("auth-jwt-moderator", "auth-jwt-admin") {
             delete("{id}") {
-                call.parameters["id"]?.let { it1 -> categoryManager.delete(it1.toInt()) }
-                    ?.let { it2 -> call.respond(it2) }
+                call.parameters["id"]?.let { categoryManager.delete(it.toInt()) }
+                    ?.let { call.respondText("Category with Id ${call.parameters["id"]} deleted") }
+
             }
         }
     }

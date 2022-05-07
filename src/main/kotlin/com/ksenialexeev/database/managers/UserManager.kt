@@ -12,7 +12,6 @@ import com.ksenialexeev.models.UserLoginDto
 import com.toxicbakery.bcrypt.Bcrypt
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -25,10 +24,12 @@ interface UserManager {
     suspend fun signup(dto: CreateUserDto): UserLoginDto
     suspend fun checkModerator(id: Int): Boolean
     suspend fun checkReader(id: Int): Boolean
-    suspend fun checkAdmin(id:Int):Boolean
+    suspend fun checkAdmin(id: Int): Boolean
     suspend fun checkCommon(id: Int): Boolean
     suspend fun getUser(id: Int): UserDto
-    suspend fun changeRole(id: Int, role: Role?, surname: String?, name:String?, patronymic:String?): UserDto
+    suspend fun changeUser(id: Int, role: Role?, surname: String?, name: String?, patronymic: String?, username: String?, password: String?): UserDto
+    suspend fun changePassword(id: Int, password: String): UserDto
+    suspend fun delete(id: Int):HttpStatusCode
 }
 
 class UserManagerImpl : UserManager, KoinComponent {
@@ -50,55 +51,81 @@ class UserManagerImpl : UserManager, KoinComponent {
         }.firstOrNull { Bcrypt.verify(password, it.password) }?.id?.value ?: throw Exception()
     }
 
-    override suspend fun check(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun check(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { true } ?: false
     }
 
     override suspend fun signup(dto: CreateUserDto) = newSuspendedTransaction(Dispatchers.IO) {
-        User.new {
-            surname = dto.surname
-            name = dto.name
-            patronymic = dto.patronymic
-            username = dto.username
-            password = encryptPassword(dto.password)
-        }.let(mapper::invoke)
+        val userId = User.find { Users.username eq dto.username }
+
+        if (userId.empty()) {
+            User.new {
+                surname = dto.surname
+                name = dto.name
+                patronymic = dto.patronymic
+                username = dto.username
+                password = encryptPassword(dto.password)
+            }.let { mapper(it) }
+        } else {
+            throw NotFoundException("User already exists", dto.username)
+        }
+
     }
 
-    override suspend fun checkModerator(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun checkModerator(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { it.role == Role.moderator } ?: false
     }
 
-    override suspend fun checkAdmin(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun checkAdmin(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { it.role == Role.admin } ?: false
     }
 
-    override suspend fun checkReader(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun checkReader(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { it.role == Role.reader } ?: false
     }
-    override suspend fun checkCommon(id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+
+    override suspend fun checkCommon(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { it.role == Role.common } ?: false
     }
 
-    override suspend fun getUser(id: Int): UserDto  = newSuspendedTransaction(Dispatchers.IO) {
-        User.findById(id)?.let{  mapperGetUser(it) } ?: throw NotFoundException("User", id)
+    override suspend fun getUser(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
+        User.findById(id)?.let { mapperGetUser(it) } ?: throw NotFoundException("User", id)
     }
 
-    override suspend fun changeRole(id: Int, role: Role?, surname: String?, name:String?, patronymic:String?): UserDto =  newSuspendedTransaction(Dispatchers.IO)  {
+    override suspend fun changeUser(id: Int, role: Role?, surname: String?, name: String?, patronymic: String?, username: String?, password: String?) =
+        newSuspendedTransaction(Dispatchers.IO) {
+            User.findById(id)?.let {
+                if (role != null) {
+                    it.role = role
+                }
+                if (surname != null) {
+                    it.surname = surname
+                }
+                if (name != null) {
+                    it.name = name
+                }
+                if (patronymic != null) {
+                    it.patronymic = patronymic
+                }
+                if(username !=null){
+                    it.username = username
+                }
+                if(password !=null){
+                    it.password = encryptPassword(password)
+                }
+                mapperGetUser(it)
+            } ?: throw NotFoundException("Changes of User", id)
+        }
+
+    override suspend fun changePassword(id: Int, password: String) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let {
-            if (role != null) {
-                it.role = role
-            }
-            if (surname != null) {
-                it.surname = surname
-            }
-            if (name != null) {
-                it.name = name
-            }
-            if (patronymic != null) {
-                it.patronymic = patronymic
-            }
+            it.password = encryptPassword(password)
             mapperGetUser(it)
-        } ?: throw NotFoundException("Changes of User", id)
+        } ?: throw NotFoundException("User with id not changed", id)
+    }
+
+    override suspend fun delete(id: Int)= newSuspendedTransaction(Dispatchers.IO) {
+        User.findById(id)?.let { it.delete();HttpStatusCode.OK } ?: throw NotFoundException("User", id)
     }
 
 }

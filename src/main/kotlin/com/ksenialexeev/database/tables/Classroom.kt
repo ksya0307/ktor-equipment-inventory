@@ -21,6 +21,5 @@ object Classrooms: IdTable<String>("classrooms"){
 }
 class Classroom(id: EntityID<String>): Entity<String>(id) {
     companion object: EntityClass<String, Classroom>(Classrooms)
-
     var user by User referencedOn Classrooms.user
 }

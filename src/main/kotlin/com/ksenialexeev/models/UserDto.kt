@@ -26,13 +26,20 @@ data class CreateUserDto(
 )
 
 @Serializable
-data class ChangeUserRoleDto(
+data class ChangeUserDto(
     val id: Int,
     val surname: String? = null,
     val name: String? = null,
     val patronymic: String? = null,
     val username: String? = null,
+    val password: String?=null,
     val role: Role? = null
+)
+
+@Serializable
+data class ChangePasswordDto(
+    val id: Int,
+    val password: String
 )
 
 @Serializable

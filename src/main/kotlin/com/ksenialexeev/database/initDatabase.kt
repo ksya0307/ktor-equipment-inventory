@@ -32,7 +32,9 @@ fun initDatabase() {
             Equipments,
             Inventories,
             Users,
-            Repairs
+            Repairs,
+            Ifos,
+            Documents
         )
     }
 }

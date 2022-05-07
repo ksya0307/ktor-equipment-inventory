@@ -21,7 +21,7 @@ import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 
-val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: (60000 * 5)
+val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: (60000 * 15)
 val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((60000 * 24 * 3))) ?: (60000 * 24 * 3)
 
 val audience = System.getenv("AUDIENCE")?.toString() ?: "audience"
@@ -176,6 +176,9 @@ fun main() {
                 commentRouting()
                 classroomEquipment()
                 equipmentRouting()
+                inventoryRouting()
+                ifoRouting()
+                documentRouting()
             }
         }
 

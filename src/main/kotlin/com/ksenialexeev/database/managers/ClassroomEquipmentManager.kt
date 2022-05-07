@@ -3,7 +3,11 @@ package com.ksenialexeev.database.managers
 import com.ksenialexeev.database.tables.*
 import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.ClassroomEquipmentMapper
+import com.ksenialexeev.mappers.EquipmentSpecsMapper
 import com.ksenialexeev.models.ClassroomEquipmentDto
+import com.ksenialexeev.models.CreateClassroomEquipmentDto
+import com.ksenialexeev.models.EquipmentSpecsDto
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -11,15 +15,32 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ClassroomEquipmentManager {
-    suspend fun getAllClassroomEquipmentByClassroomAndCategory(classroom: String?, equipmentCategory: String?): List<ClassroomEquipmentDto>
+    suspend fun getAllClassroomEquipmentByClassroomAndCategory(
+        classroom: String?,
+        equipmentCategory: String?
+    ): List<ClassroomEquipmentDto?>
+    suspend fun getSpecsById(id: Int):EquipmentSpecsDto
+    suspend fun create(dto: CreateClassroomEquipmentDto): ClassroomEquipmentDto?
+    suspend fun update(
+        id: Int,
+        inventory_number: Long?,
+        classroom: String?,
+        equipment: String?,
+        number_in_classroom: String?,
+        equipment_type: EquipmentBelonging?
+    ): ClassroomEquipmentDto?
+    suspend fun delete(id: Int):HttpStatusCode
 }
 
 class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
+
     private val mapper by inject<ClassroomEquipmentMapper>()
+    private val mapperSpecs by inject<EquipmentSpecsMapper>()
+
     override suspend fun getAllClassroomEquipmentByClassroomAndCategory(
         classroom: String?,
         equipmentCategory: String?
-    ): List<ClassroomEquipmentDto> =
+    ): List<ClassroomEquipmentDto?> =
         newSuspendedTransaction(Dispatchers.IO) {
             val eqi: Equipment? = equipmentCategory?.let { category ->
                 Category.find { Categories.name eq category }.firstOrNull()?.let {
@@ -45,4 +66,68 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
                 }
             }.map(mapper::invoke)
         }
+
+    override suspend fun getSpecsById(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
+        ClassroomsEquipment.findById(id)?.let {
+            mapperSpecs(it)
+        }?: throw NotFoundException("Equipment Specs", id)
+    }
+
+    override suspend fun create(dto: CreateClassroomEquipmentDto) = newSuspendedTransaction(Dispatchers.IO) {
+
+        val classroomId = Classroom.find { Classrooms.id eq dto.classroom.toString() }.firstOrNull()
+        println("classroomId - ${classroomId?.id}")
+        val equipmentId = Equipment.find { Equipments.description eq dto.equipment }.firstOrNull()
+        val existingInventoryNumber = ClassroomsEquipment.find {ClassroomsEquipments.inventory_number eq dto.inventory_number}
+        if(existingInventoryNumber.empty()){
+            ClassroomsEquipment.new {
+                inventory_number = dto.inventory_number
+                if (classroomId != null) {
+                    classroom = classroomId
+                }
+                if (equipmentId != null) {
+                    equipment = equipmentId
+                }
+                if (dto.number_in_classroom != null) {
+                    number_in_classroom = dto.number_in_classroom.toString()
+                }
+                equipment_type = dto.equipment_type
+            }.let { mapper(it) }
+        }else{
+            throw NotFoundException("Equipment already exists", dto.inventory_number)
+        }
+    }
+
+    override suspend fun update(
+        id: Int,
+        inventory_number: Long?,
+        classroom: String?,
+        equipment: String?,
+        number_in_classroom: String?,
+        equipment_type: EquipmentBelonging?
+    ) = newSuspendedTransaction(Dispatchers.IO) {
+        val classroomId = Classroom.find { Classrooms.id eq classroom.toString() }.firstOrNull()
+        val equipmentId = Equipment.find { Equipments.description eq equipment.toString() }.firstOrNull()
+        ClassroomsEquipment.findById(id)?.let {
+            if (inventory_number != null) {
+                it.inventory_number = inventory_number
+            }
+
+            it.classroom = classroomId
+            if (number_in_classroom != null) {
+                it.number_in_classroom = number_in_classroom
+            }
+            if (equipmentId != null) {
+                it.equipment = equipmentId
+            }
+            if (equipment_type != null) {
+                it.equipment_type = equipment_type
+            }
+            mapper(it)
+        } ?: throw NotFoundException("Changes of ClassroomEquipment", id)
+    }
+
+    override suspend fun delete(id: Int)= newSuspendedTransaction(Dispatchers.IO) {
+        ClassroomsEquipment.findById(id)?.let { it.delete();HttpStatusCode.OK }?: throw NotFoundException("ClassroomsEquipment",id)
+    }
 }

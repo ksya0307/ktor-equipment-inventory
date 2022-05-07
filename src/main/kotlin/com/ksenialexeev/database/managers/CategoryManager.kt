@@ -6,10 +6,12 @@ import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.CategoryMapper
 import com.ksenialexeev.models.*
 import io.ktor.http.*
-//import org.koin.core.component.KoinComponent
-//import org.koin.core.component.inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.koin.core.component.KoinComponent
@@ -33,9 +35,16 @@ class CategoryManagerImpl : CategoryManager(), KoinComponent {
     private val mapperImpl by inject<CategoryMapper>()
 
     override suspend fun create(dto: CreateCategoryDto) = newSuspendedTransaction(Dispatchers.IO) {
-        Category.new {
-            name = dto.name
-        }.let { mapperImpl(it) }
+        val categoryId = Category.find { Categories.name eq dto.name }
+        print(categoryId)
+        if(categoryId.empty()){
+            Category.new {
+                name = dto.name
+            }.let { mapperImpl(it) }
+        }else{
+            throw  NotFoundException("Category already exists", dto.name)
+        }
+
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
