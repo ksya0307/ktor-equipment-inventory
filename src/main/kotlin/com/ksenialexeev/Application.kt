@@ -87,7 +87,7 @@ fun main() {
             }
             jwt("auth-jwt-reader") {
                 realm = myRealm
-                //для верификации токена что он не expired, что он сгененирован этим сервером
+                //для верификации токена что            он не expired, что он сгененирован этим сервером
                 verifier(
                     JWT.require(algorithm)
                         .withAudience(audience)

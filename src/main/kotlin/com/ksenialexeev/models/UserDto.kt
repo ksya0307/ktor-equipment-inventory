@@ -20,7 +20,7 @@ data class UserDto(
 data class CreateUserDto(
     val surname: String,
     val name: String,
-    val patronymic: String,
+    val patronymic: String? = null,
     val username: String,
     val password: String,
 )

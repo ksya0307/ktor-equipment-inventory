@@ -13,8 +13,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface CommentManager {
-    suspend fun getAllComments(): List<CommentDto>
-    suspend fun getCommentByInventory(id: Int): List<CommentDto>
+    suspend fun getAllComments(): List<CommentDto?>
+    suspend fun getCommentByInventory(id: Int): List<CommentDto?>
     suspend fun delete(id: Int):HttpStatusCode
 }
 

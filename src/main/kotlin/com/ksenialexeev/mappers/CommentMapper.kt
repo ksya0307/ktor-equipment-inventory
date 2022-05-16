@@ -11,11 +11,13 @@ class CommentMapper : KoinComponent {
     val userMapper by inject<UserMapper>()
 
     operator fun invoke(comment: Comment) =
-        CommentDto(
-            id = comment.id.value,
-            inventory = inventoryMapper(inventory = comment.inventory)!!,
-            user = userMapper(user = comment.user),
-            comment = comment.comment,
-            datetime = comment.datetime,
-        )
+        userMapper(user = comment.user)?.let {
+            CommentDto(
+                id = comment.id.value,
+                inventory = inventoryMapper(inventory = comment.inventory)!!,
+                user = it,
+                comment = comment.comment,
+                datetime = comment.datetime,
+            )
+        }
     }

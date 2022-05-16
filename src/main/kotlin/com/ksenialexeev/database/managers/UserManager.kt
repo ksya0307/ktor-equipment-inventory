@@ -27,9 +27,18 @@ interface UserManager {
     suspend fun checkAdmin(id: Int): Boolean
     suspend fun checkCommon(id: Int): Boolean
     suspend fun getUser(id: Int): UserDto
-    suspend fun changeUser(id: Int, role: Role?, surname: String?, name: String?, patronymic: String?, username: String?, password: String?): UserDto
+    suspend fun changeUser(
+        id: Int,
+        role: Role?,
+        surname: String?,
+        name: String?,
+        patronymic: String?,
+        username: String?,
+        password: String?
+    ): UserDto
+
     suspend fun changePassword(id: Int, password: String): UserDto
-    suspend fun delete(id: Int):HttpStatusCode
+    suspend fun delete(id: Int): HttpStatusCode
 }
 
 class UserManagerImpl : UserManager, KoinComponent {
@@ -62,7 +71,9 @@ class UserManagerImpl : UserManager, KoinComponent {
             User.new {
                 surname = dto.surname
                 name = dto.name
-                patronymic = dto.patronymic
+                if (dto.patronymic != null) {
+                    patronymic = dto.patronymic
+                }
                 username = dto.username
                 password = encryptPassword(dto.password)
             }.let { mapper(it) }
@@ -92,7 +103,15 @@ class UserManagerImpl : UserManager, KoinComponent {
         User.findById(id)?.let { mapperGetUser(it) } ?: throw NotFoundException("User", id)
     }
 
-    override suspend fun changeUser(id: Int, role: Role?, surname: String?, name: String?, patronymic: String?, username: String?, password: String?) =
+    override suspend fun changeUser(
+        id: Int,
+        role: Role?,
+        surname: String?,
+        name: String?,
+        patronymic: String?,
+        username: String?,
+        password: String?
+    ) =
         newSuspendedTransaction(Dispatchers.IO) {
             User.findById(id)?.let {
                 if (role != null) {
@@ -107,10 +126,10 @@ class UserManagerImpl : UserManager, KoinComponent {
                 if (patronymic != null) {
                     it.patronymic = patronymic
                 }
-                if(username !=null){
+                if (username != null) {
                     it.username = username
                 }
-                if(password !=null){
+                if (password != null) {
                     it.password = encryptPassword(password)
                 }
                 mapperGetUser(it)
@@ -124,7 +143,7 @@ class UserManagerImpl : UserManager, KoinComponent {
         } ?: throw NotFoundException("User with id not changed", id)
     }
 
-    override suspend fun delete(id: Int)= newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { it.delete();HttpStatusCode.OK } ?: throw NotFoundException("User", id)
     }
 

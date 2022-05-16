@@ -1,10 +1,12 @@
 package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.CategoryManager
+import com.ksenialexeev.models.CreateCategoryDto
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.serialization.json.Json
@@ -37,6 +39,11 @@ fun Route.categoryRouting() {
             }
         }
         authenticate("auth-jwt-moderator", "auth-jwt-admin") {
+            post{
+                val categoryData = call.receive<CreateCategoryDto>()
+                categoryManager.create(categoryData)
+                call.respondText("Category with name ${categoryData.name} created")
+            }
             delete("{id}") {
                 call.parameters["id"]?.let { categoryManager.delete(it.toInt()) }
                     ?.let { call.respondText("Category with Id ${call.parameters["id"]} deleted") }

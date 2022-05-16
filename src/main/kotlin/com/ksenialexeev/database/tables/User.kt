@@ -9,7 +9,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 object Users:IntIdTable("users"){
     val surname = varchar("surname", 64)
     val name = varchar("name",64)
-    val patronymic = varchar("patronymic",64)
+    val patronymic = varchar("patronymic",64).nullable()
     val username = varchar("username",64)
     val password = text("password")
     val role = enumeration("role", Role::class).default(Role.common)

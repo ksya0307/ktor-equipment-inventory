@@ -14,16 +14,18 @@ class InventoryMapper : KoinComponent {
     operator fun invoke(inventory: Inventory) = inventory.given?.let {
         inventory.by_request?.let { it1 ->
             classroomEquipmentMapper(classroomsEquipment = inventory.inventory_number)?.let { it2 ->
-                InventoryDto(
-                    id = inventory.id.value,
-                    inventory_number = it2,
-                    get_date = inventory.get_date,
-                    document = documentMapper(document = inventory.document),
-                    ifo = ifoManager(ifo = inventory.ifo),
-                    for_classroom = classroomMapper(classroom = inventory.for_classroom),
-                    given = it,
-                    by_request = it1
-                )
+                classroomMapper(classroom = inventory.for_classroom)?.let { it3 ->
+                    InventoryDto(
+                        id = inventory.id.value,
+                        inventory_number = it2,
+                        get_date = inventory.get_date,
+                        document = documentMapper(document = inventory.document),
+                        ifo = ifoManager(ifo = inventory.ifo),
+                        for_classroom = it3,
+                        given = it,
+                        by_request = it1
+                    )
+                }
             }
         }
     }

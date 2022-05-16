@@ -16,10 +16,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ClassroomManager {
-    suspend fun getAllClassrooms(): List<ClassroomDto>
-    suspend fun getClassroomsByUser(id: Int): List<ClassroomDto>
+    suspend fun getAllClassrooms(): List<ClassroomDto?>
+    suspend fun getClassroomsByUser(id: Int): List<ClassroomDto?>
     suspend fun deleteByNumber(number: String): HttpStatusCode
-    suspend fun create(dto: CreateClassroomDto): ClassroomDto
+    suspend fun create(dto: CreateClassroomDto): ClassroomDto?
 }
 
 class ClassroomManagerImpl : ClassroomManager, KoinComponent {

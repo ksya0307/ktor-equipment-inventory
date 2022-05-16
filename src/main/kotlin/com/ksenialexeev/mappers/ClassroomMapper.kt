@@ -11,8 +11,10 @@ class ClassroomMapper : KoinComponent {
 
     val userMapper by inject<UserMapper>()
 
-    operator fun invoke(classroom: Classroom) = ClassroomDto(
+    operator fun invoke(classroom: Classroom) = userMapper(user = classroom.user)?.let {
+        ClassroomDto(
         number = classroom.id.value,
-        user = userMapper(user = classroom.user)
+        user = it
     )
+    }
 }
