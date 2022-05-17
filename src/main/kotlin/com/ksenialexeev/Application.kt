@@ -179,6 +179,7 @@ fun main() {
                 inventoryRouting()
                 ifoRouting()
                 documentRouting()
+                repairRouting()
             }
         }
 

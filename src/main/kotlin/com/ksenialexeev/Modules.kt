@@ -13,6 +13,8 @@ import com.ksenialexeev.mappers.EquipmentSpecsMapper
 import com.ksenialexeev.mappers.EquipmentMapper
 import com.ksenialexeev.mappers.DocumentMapper
 import com.ksenialexeev.mappers.IfoMapper
+import com.ksenialexeev.mappers.RepairMapper
+import com.ksenialexeev.mappers.RepairEquipmentMapper
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
@@ -42,6 +44,8 @@ val mappersModule = module {
     singleOf(::CreateUserMapper)
     singleOf(::DocumentMapper)
     singleOf(::IfoMapper)
+    singleOf(::RepairMapper)
+    singleOf(::RepairEquipmentMapper)
 }
 
 val managerModule = module {
@@ -71,5 +75,11 @@ val managerModule = module {
     }
     singleOf(::DocumentManagerImpl){
         bind<DocumentManager>()
+    }
+    singleOf(::RepairManagerImpl){
+        bind<RepairManager>()
+    }
+    singleOf(::RepairEquipmentManagerImpl){
+        bind<RepairEquipmentManager>()
     }
 }
