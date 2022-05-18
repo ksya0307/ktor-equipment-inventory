@@ -19,7 +19,10 @@ fun Route.repairRouting() {
             get {
                 call.respond(repairEquipmentManager.getAll())
             }
-
+            get("{user-id}") {
+                call.parameters["user-id"]?.let { repairEquipmentManager.getByUserId(it.toInt()) }?.also { call.respond(it) }
+                    ?: throw NotFoundException("id_param", "id")
+            }
         }
     }
 
@@ -44,7 +47,7 @@ fun Route.repairRouting() {
                 repairManager.update(repairData.id, repairData.phone, repairData.datetime)
                 call.respondText("Repair with Id ${repairData.id} updated")
             }
-            delete("{id}"){
+            delete("{id}") {
                 call.parameters["id"]?.let { repairManager.delete(it.toInt()) }?.let {
                     call.respondText("Repair with Id ${call.parameters["id"]} deleted")
                 }

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class RepairDto(val phone:String, val datetime: LocalDate, val completed:Boolean)
+data class RepairDto(val phone:String)
 
 @Serializable
 data class UpdateRepairDto(val id:Int,val phone:String, val datetime: LocalDate,val completed:Boolean)
