@@ -7,6 +7,8 @@ import com.ksenialexeev.models.CreateRepairEquipmentDto
 import com.ksenialexeev.models.RepairEquipmentDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.innerJoin
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

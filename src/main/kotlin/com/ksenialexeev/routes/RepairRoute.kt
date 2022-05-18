@@ -2,6 +2,7 @@ package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.RepairEquipmentManager
 import com.ksenialexeev.database.managers.RepairManager
+import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.models.RepairDto
 import com.ksenialexeev.models.UpdateRepairDto
 import io.ktor.application.*
@@ -38,9 +39,7 @@ fun Route.repairRouting() {
                     ?.let { call.respond(it) }
             }
             post {
-                val repairData = call.receive<RepairDto>()
-                repairManager.create(repairData)
-                call.respondText("Repair created")
+                call.respond(repairManager.create(call.receive()))
             }
             put {
                 val repairData = call.receive<UpdateRepairDto>()

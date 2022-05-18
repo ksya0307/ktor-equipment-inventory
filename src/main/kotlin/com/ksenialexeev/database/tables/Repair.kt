@@ -1,5 +1,9 @@
 package com.ksenialexeev.database.tables
 
+import kotlinx.datetime.Instant
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -9,8 +13,9 @@ import java.time.Instant.now
 
 object Repairs : IntIdTable("repair") {
     val phone = varchar("phone",18)
-    val datetime = date("datetime")
-    val completed = bool("completed")
+    val datetime = date("datetime").also {
+        it.defaultValueFun = { Clock.System.now().toLocalDateTime(TimeZone.UTC).date } }
+    val completed = bool("completed").default(false)
 }
 
 class Repair(id: EntityID<Int>) : IntEntity(id){
