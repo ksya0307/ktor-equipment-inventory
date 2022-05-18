@@ -38,7 +38,6 @@ data class ChangeUserDto(
 
 @Serializable
 data class ChangePasswordDto(
-    val id: Int,
     val password: String
 )
 

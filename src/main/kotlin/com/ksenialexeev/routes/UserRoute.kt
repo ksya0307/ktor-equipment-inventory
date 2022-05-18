@@ -43,7 +43,9 @@ fun Route.userRouting() {
             }
             put("change-password") {
                 val userData = call.receive<ChangePasswordDto>()
-                userManager.changePassword(userData.id, userData.password)
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asInt()
+                userManager.changePassword(userId, userData.password)
                 call.respondText("Password Changed")
             }
         }
