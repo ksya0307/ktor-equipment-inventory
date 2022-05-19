@@ -11,6 +11,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
@@ -35,7 +36,7 @@ class CategoryManagerImpl : CategoryManager(), KoinComponent {
     private val mapperImpl by inject<CategoryMapper>()
 
     override suspend fun create(dto: CreateCategoryDto) = newSuspendedTransaction(Dispatchers.IO) {
-        val categoryId = Category.find { Categories.name eq dto.name }
+        val categoryId = Category.find { Categories.name.lowerCase() eq dto.name }
         print(categoryId)
         if(categoryId.empty()){
             Category.new {

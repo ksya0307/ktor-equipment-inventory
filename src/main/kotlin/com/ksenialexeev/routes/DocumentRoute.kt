@@ -23,9 +23,9 @@ fun Route.documentRouting(){
                 documentManager.create(documentData)
                 call.respondText("Document ${documentData.name} created")
             }
-            put {
+            put ("{id}"){
                 val documentData = call.receive<ChangeDocumentDto>()
-                documentManager.update(documentData)
+                call.parameters["id"]?.let {  documentManager.update(it.toInt(), documentData.name) }
                 call.respondText("Document updated")
             }
             delete("{id}") {

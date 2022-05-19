@@ -15,7 +15,7 @@ import org.koin.core.component.inject
 interface DocumentManager {
     suspend fun getAll(): List<DocumentDto>
     suspend fun create(dto: DocumentDto): DocumentDto
-    suspend fun update(dto: ChangeDocumentDto): DocumentDto
+    suspend fun update(id:Int, name:String): DocumentDto
     suspend fun delete(id: Int): HttpStatusCode
 }
 
@@ -38,15 +38,15 @@ class DocumentManagerImpl : DocumentManager, KoinComponent {
         }
     }
 
-    override suspend fun update(dto: ChangeDocumentDto) = newSuspendedTransaction(Dispatchers.IO) {
-        val document = Document.find { Documents.name eq dto.name }
+    override suspend fun update(id:Int, name:String) = newSuspendedTransaction(Dispatchers.IO) {
+        val document = Document.find { Documents.name eq name }
         if (document.empty()) {
-            Document.findById(dto.id)?.let {
-                it.name = dto.name
+            Document.findById(id)?.let {
+                it.name = name
                 mapper(it)
             } ?: throw NotFoundException("Document", id)
         } else {
-            throw NotFoundException("Document already exists", dto.name)
+            throw NotFoundException("Document already exists", name)
         }
 
     }

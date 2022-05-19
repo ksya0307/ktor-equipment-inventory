@@ -2,7 +2,7 @@ package com.ksenialexeev.exceptions
 
 class NotFoundException(
     val name: String,
-    val id: Any
+    private val detail: Any
 ) : Exception(
-    "$name with id $id not found"
+    "$name $detail"
 )

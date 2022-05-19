@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 data class DocumentDto(val name:String)
 
 @Serializable
-data class ChangeDocumentDto(val id:Int, val name: String)
+data class ChangeDocumentDto(val name: String)
