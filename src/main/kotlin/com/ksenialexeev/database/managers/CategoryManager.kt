@@ -27,7 +27,7 @@ abstract class CategoryManager : PageManager<CategoryDto>(Categories, CategoryRo
 
 object CategoryRowMapper : OneWayMapper<ResultRow, CategoryDto> {
     override fun invoke(input: ResultRow): CategoryDto {
-       return CategoryDto(name = input[Categories.name])
+       return CategoryDto(id = input[Categories.id].value,name = input[ Categories.name])
     }
 }
 
