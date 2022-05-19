@@ -36,7 +36,7 @@ class CategoryManagerImpl : CategoryManager(), KoinComponent {
     private val mapperImpl by inject<CategoryMapper>()
 
     override suspend fun create(dto: CreateCategoryDto) = newSuspendedTransaction(Dispatchers.IO) {
-        val categoryId = Category.find { Categories.name.lowerCase() eq dto.name }
+        val categoryId = Category.find { Categories.name.lowerCase() eq dto.name.lowercase() }
         print(categoryId)
         if(categoryId.empty()){
             Category.new {
