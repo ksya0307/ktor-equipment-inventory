@@ -12,9 +12,7 @@ data class UserDto(
     val patronymic: String,
     val username: String,
     val role: Role
-) {
-    val fullName = "$surname $name $patronymic"
-}
+)
 
 @Serializable
 data class CreateUserDto(
