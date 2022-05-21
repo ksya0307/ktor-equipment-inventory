@@ -36,7 +36,7 @@ fun Route.userRouting() {
             }
         }
 
-        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin", "auth-jwt-common") {
+        authenticate("auth-jwt-moderator", "auth-jwt-teacher", "auth-jwt-admin", "auth-jwt-common") {
             get() {
                 val principal = call.principal<JWTPrincipal>()
                 val userId = principal!!.payload.getClaim("id").asInt()
@@ -67,11 +67,11 @@ fun Route.userRouting() {
             val authUser = call.receive<UserLoginDto>()
             val user = userManager.login(authUser.username, authUser.password)
             val access = JWT.create().withAudience(audience).withIssuer(issuer)
-                .withClaim("id", userManager.login(authUser.username, authUser.password))
+                .withClaim("id", user)
                 .withExpiresAt(Date(System.currentTimeMillis() + accessTokenPeriod))
                 .sign(algorithm)
             val refresh = JWT.create().withAudience(audience).withIssuer(issuer)
-                .withClaim("id", userManager.login(authUser.username, authUser.password))
+                .withClaim("id", user)
                 .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
                 .sign(algorithm)
             call.respond(TokenPair(access, refresh))

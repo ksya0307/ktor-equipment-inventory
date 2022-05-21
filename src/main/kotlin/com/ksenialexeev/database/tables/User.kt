@@ -26,5 +26,5 @@ class User(id:EntityID<Int>):IntEntity(id){
     var role by Users.role
 }
 
-enum class Role { admin, moderator, reader, common }
+enum class Role { admin, moderator, teacher, common }
 //0 1 2 3

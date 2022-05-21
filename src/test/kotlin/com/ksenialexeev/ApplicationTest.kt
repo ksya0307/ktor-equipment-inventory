@@ -1,8 +1,7 @@
 package com.ksenialexeev
 
-import com.ksenialexeev.plugins.categoryRouting
 import com.ksenialexeev.plugins.configureRouting
-import com.ksenialexeev.plugins.userRouting
+
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlin.test.Test

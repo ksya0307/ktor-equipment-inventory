@@ -13,7 +13,7 @@ import org.koin.ktor.ext.inject
 fun Route.classroomRouting() {
     val classroomManager by inject<ClassroomManager>()
     route("classrooms") {
-        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
+        authenticate("auth-jwt-moderator", "auth-jwt-teacher", "auth-jwt-admin") {
             get {
                 call.respond(classroomManager.getAllClassrooms())
             }

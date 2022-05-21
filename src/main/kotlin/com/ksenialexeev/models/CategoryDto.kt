@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 data class CategoryDto(val id:Int ,val name: String)
 
 @Serializable
-data class CreateCategoryDto(val name:String)
+data class CreateOrUpdateCategoryDto(val name:String)

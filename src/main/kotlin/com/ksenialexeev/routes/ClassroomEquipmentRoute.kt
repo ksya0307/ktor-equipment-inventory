@@ -13,7 +13,7 @@ import org.koin.ktor.ext.inject
 fun Route.classroomEquipment() {
     val classroomEquipmentManager by inject<ClassroomEquipmentManager>()
     route("classroom-equipment") {
-        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
+        authenticate("auth-jwt-moderator", "auth-jwt-teacher", "auth-jwt-admin") {
             get {
                 call.respond(
                     classroomEquipmentManager.getAllClassroomEquipmentByClassroomAndCategory(

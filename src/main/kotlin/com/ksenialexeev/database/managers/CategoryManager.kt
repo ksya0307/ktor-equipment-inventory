@@ -18,64 +18,47 @@ import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionA
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-abstract class CategoryManager : PageManager<CategoryDto>(Categories, CategoryRowMapper) {
-    abstract suspend fun create(dto: CreateCategoryDto): CategoryDto
-    abstract suspend fun delete(id: Int): HttpStatusCode
-    abstract suspend fun getAll(): List<CategoryDto>
 
+interface CategoryManager {
+    suspend fun create(dto: CreateOrUpdateCategoryDto): CategoryDto
+    suspend fun delete(id: Int): HttpStatusCode
+    suspend fun getAll(): List<CategoryDto>
+    suspend fun update(id:Int, name:String) : CategoryDto
 }
 
-object CategoryRowMapper : OneWayMapper<ResultRow, CategoryDto> {
-    override fun invoke(input: ResultRow): CategoryDto {
-       return CategoryDto(id = input[Categories.id].value,name = input[ Categories.name])
-    }
-}
+class CategoryManagerImpl : CategoryManager, KoinComponent {
 
-class CategoryManagerImpl : CategoryManager(), KoinComponent {
+    private val mapper by inject<CategoryMapper>()
 
-    private val mapperImpl by inject<CategoryMapper>()
-
-    override suspend fun create(dto: CreateCategoryDto) = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun create(dto: CreateOrUpdateCategoryDto) = newSuspendedTransaction(Dispatchers.IO) {
         val categoryId = Category.find { Categories.name.lowerCase() eq dto.name.lowercase() }
         print(categoryId)
-        if(categoryId.empty()){
+        if (categoryId.empty()) {
             Category.new {
                 name = dto.name
-            }.let { mapperImpl(it) }
-        }else{
+            }.let { mapper(it) }
+        } else {
             throw  NotFoundException("Category already exists", dto.name)
         }
-
     }
 
-    override suspend fun getPage(
-        page: Long,
-        size: Int?,
-        sortDirection: SortOrder,
-        sortByColumn: String?
-    ): String = suspendedTransactionAsync {
-        val column = table.columns.singleOrNull { it.name == sortByColumn }
-        val query = table
-            .selectAll()
-            .orderBy(column ?: table.columns.first(), sortDirection)
-        if (size != null) {
-            query.limit(size, page * size)
-        }
-        //query.forEach { println(it[column]) }
-        Paging(
-            page, size ?: 0, sortDirection, sortByColumn,
-            query.count(),
-            query.map(mapper::invoke)
-        ).let {
-            Json.encodeToString(it)
-        }
-    }.await()
-
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-            Category.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw NotFoundException("Category", id)
+        Category.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw NotFoundException("Category", id)
     }
 
     override suspend fun getAll(): List<CategoryDto> = newSuspendedTransaction(Dispatchers.IO) {
-        Category.all().map(mapperImpl::invoke)
+        Category.all().map(mapper::invoke)
+    }
+
+    override suspend fun update(id: Int, name: String)= newSuspendedTransaction(Dispatchers.IO) {
+        val category = Category.find {Categories.name eq name}
+        if(category.empty()){
+            Category.findById(id)?.let {
+                it.name = name
+                mapper(it)
+            } ?: throw NotFoundException("Category", id)
+        }else {
+            throw NotFoundException("Category already exists", name)
+        }
     }
 }

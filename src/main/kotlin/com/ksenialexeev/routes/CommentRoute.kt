@@ -11,7 +11,7 @@ import org.koin.ktor.ext.inject
 fun Route.commentRouting() {
     val commentManager by inject<CommentManager>()
     route("comments") {
-        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
+        authenticate("auth-jwt-moderator", "auth-jwt-teacher", "auth-jwt-admin") {
             get {
                 call.respond(commentManager.getAllComments())
             }

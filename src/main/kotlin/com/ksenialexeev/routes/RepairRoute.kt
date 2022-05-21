@@ -16,7 +16,7 @@ fun Route.repairRouting() {
     val repairEquipmentManager by inject<RepairEquipmentManager>()
 
     route("repair-equipment") {
-        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
+        authenticate("auth-jwt-moderator", "auth-jwt-teacher", "auth-jwt-admin") {
             get {
                 call.respond(repairEquipmentManager.getAll())
             }

@@ -12,6 +12,7 @@ import com.ksenialexeev.models.UserLoginDto
 import com.toxicbakery.bcrypt.Bcrypt
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -23,7 +24,7 @@ interface UserManager {
     suspend fun check(id: Int): Boolean
     suspend fun signup(dto: CreateUserDto): UserLoginDto
     suspend fun checkModerator(id: Int): Boolean
-    suspend fun checkReader(id: Int): Boolean
+    suspend fun checkTeacher(id: Int): Boolean
     suspend fun checkAdmin(id: Int): Boolean
     suspend fun checkCommon(id: Int): Boolean
     suspend fun getUser(id: Int): UserDto
@@ -91,8 +92,8 @@ class UserManagerImpl : UserManager, KoinComponent {
         User.findById(id)?.let { it.role == Role.admin } ?: false
     }
 
-    override suspend fun checkReader(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        User.findById(id)?.let { it.role == Role.reader } ?: false
+    override suspend fun checkTeacher(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
+        User.findById(id)?.let { it.role == Role.teacher } ?: false
     }
 
     override suspend fun checkCommon(id: Int) = newSuspendedTransaction(Dispatchers.IO) {

@@ -8,6 +8,7 @@ import com.ksenialexeev.models.ChangeDocumentDto
 import com.ksenialexeev.models.DocumentDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -28,7 +29,7 @@ class DocumentManagerImpl : DocumentManager, KoinComponent {
     }
 
     override suspend fun create(dto: DocumentDto) = newSuspendedTransaction(Dispatchers.IO) {
-        val document = Document.find { Documents.name eq dto.name }
+        val document = Document.find { Documents.name.lowerCase() eq dto.name.lowercase() }
         if (document.empty()) {
             Document.new {
                 name = dto.name
@@ -39,7 +40,7 @@ class DocumentManagerImpl : DocumentManager, KoinComponent {
     }
 
     override suspend fun update(id:Int, name:String) = newSuspendedTransaction(Dispatchers.IO) {
-        val document = Document.find { Documents.name eq name }
+        val document = Document.find { Documents.name.lowerCase() eq name.lowercase() }
         if (document.empty()) {
             Document.findById(id)?.let {
                 it.name = name

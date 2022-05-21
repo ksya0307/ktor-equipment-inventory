@@ -7,6 +7,7 @@ import com.ksenialexeev.mappers.IfoMapper
 import com.ksenialexeev.models.IfoDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -30,7 +31,7 @@ class IfoManagerImpl : IfoManager, KoinComponent {
     }
 
     override suspend fun update(id: Int, name: String) = newSuspendedTransaction(Dispatchers.IO) {
-        val ifo = Ifo.find { Ifos.name eq name }
+        val ifo = Ifo.find { Ifos.name.lowerCase() eq name.lowercase() }
         if (ifo.empty()) {
             Ifo.findById(id)?.let {
                 it.name = name
@@ -42,7 +43,7 @@ class IfoManagerImpl : IfoManager, KoinComponent {
     }
 
     override suspend fun create(dto: IfoDto) = newSuspendedTransaction(Dispatchers.IO) {
-        val ifo = Ifo.find { Ifos.name eq dto.name }
+        val ifo = Ifo.find { Ifos.name.lowerCase() eq dto.name.lowercase() }
         if (ifo.empty()) {
             Ifo.new {
                 name = dto.name

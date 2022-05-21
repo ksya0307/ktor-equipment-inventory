@@ -85,7 +85,7 @@ fun main() {
                     call.respond(HttpStatusCode.Unauthorized, "Access Token is not valid or has expired")
                 }
             }
-            jwt("auth-jwt-reader") {
+            jwt("auth-jwt-teacher") {
                 realm = myRealm
                 //для верификации токена что            он не expired, что он сгененирован этим сервером
                 verifier(
@@ -95,7 +95,7 @@ fun main() {
                         .build()
                 )
                 validate { credential ->
-                    if (userManager.checkReader(credential.payload.getClaim("id").asInt())) {
+                    if (userManager.checkTeacher(credential.payload.getClaim("id").asInt())) {
                         //состоит из payload - то ЧТО будет хранить JWT - данные юзера
                         JWTPrincipal(credential.payload)
                     } else {

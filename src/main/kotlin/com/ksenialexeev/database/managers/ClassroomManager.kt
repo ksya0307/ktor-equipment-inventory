@@ -11,6 +11,7 @@ import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -45,7 +46,7 @@ class ClassroomManagerImpl : ClassroomManager, KoinComponent {
     }
 
     override suspend fun create(dto: CreateClassroomDto) = newSuspendedTransaction(Dispatchers.IO) {
-        val existingClassroom = Classroom.findById(dto.number)
+        val existingClassroom = Classroom.findById(dto.number.lowercase())
             if (existingClassroom == null) {
 
                 Classroom.new(dto.number) {

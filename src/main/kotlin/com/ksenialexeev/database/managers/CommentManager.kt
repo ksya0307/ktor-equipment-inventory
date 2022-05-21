@@ -16,6 +16,7 @@ interface CommentManager {
     suspend fun getAllComments(): List<CommentDto?>
     suspend fun getCommentByInventory(id: Int): List<CommentDto?>
     suspend fun delete(id: Int):HttpStatusCode
+    suspend fun update(id:Int, comment: String?):CommentDto
 }
 
 class CommentManagerImpl : CommentManager, KoinComponent {
@@ -34,6 +35,15 @@ class CommentManagerImpl : CommentManager, KoinComponent {
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         Comment.findById(id)?.let { it.delete();HttpStatusCode.OK }?: throw NotFoundException("Comment",id)
+    }
+
+    override suspend fun update(id: Int, comment: String?) = newSuspendedTransaction(Dispatchers.IO) {
+        Comment.findById(id)?.let {
+            if (comment != null) {
+                it.comment = comment
+            }
+            mapper(it)
+        } ?: throw NotFoundException("Comment", id)
     }
 
 }

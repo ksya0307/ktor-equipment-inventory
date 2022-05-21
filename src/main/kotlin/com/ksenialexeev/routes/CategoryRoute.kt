@@ -1,7 +1,8 @@
 package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.CategoryManager
-import com.ksenialexeev.models.CreateCategoryDto
+
+import com.ksenialexeev.models.CreateOrUpdateCategoryDto
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -18,29 +19,14 @@ fun Route.categoryRouting() {
     val categoryManager by inject<CategoryManager>()
     val json by inject<Json>()
     route("categories") {
-        authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin") {
+        authenticate("auth-jwt-moderator", "auth-jwt-teacher", "auth-jwt-admin") {
             get {
-                call.respondText(
-                    call.request.queryParameters.let { params ->
-                        println(params.names().map { it to params[it] })
-                        if (params.contains("size")) {
-                            categoryManager.getPage(
-                                page = params["page"]?.toLong() ?: 0,
-                                size = params["size"]?.toInt() ?: 10,
-                                sortDirection = params["sortDirection"]?.let { SortOrder.valueOf(it) }
-                                    ?: SortOrder.ASC,
-                                sortByColumn = params["sortByColumn"]
-                            )
-                        } else {
-                            json.encodeToString(categoryManager.getAll())
-                        }
-                    }, contentType = ContentType.Application.Json
-                )
+                call.respond( categoryManager.getAll())
             }
         }
         authenticate("auth-jwt-moderator", "auth-jwt-admin") {
             post{
-                val categoryData = call.receive<CreateCategoryDto>()
+                val categoryData = call.receive<CreateOrUpdateCategoryDto>()
                 categoryManager.create(categoryData)
                 call.respondText("Category with name ${categoryData.name} created")
             }
@@ -48,6 +34,11 @@ fun Route.categoryRouting() {
                 call.parameters["id"]?.let { categoryManager.delete(it.toInt()) }
                     ?.let { call.respondText("Category with Id ${call.parameters["id"]} deleted") }
 
+            }
+            put("{id}"){
+                val categoryData = call.receive<CreateOrUpdateCategoryDto>()
+                call.parameters["id"]?.let { categoryManager.update(it.toInt(), categoryData.name) }
+                call.respondText("Category updated")
             }
         }
     }
