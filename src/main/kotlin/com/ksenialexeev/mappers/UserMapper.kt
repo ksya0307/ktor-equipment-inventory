@@ -6,16 +6,14 @@ import com.ksenialexeev.models.UserDto
 import com.ksenialexeev.models.UserLoginDto
 
 class UserMapper {
-    operator fun invoke(user: User) = user.patronymic?.let {
-        UserDto(
+    operator fun invoke(user: User) =  UserDto(
         id = user.id.value,
         surname = user.surname,
         name = user.name,
-        patronymic = it,
+        patronymic = user.patronymic,
         username = user.username,
         role = user.role
     )
-    }
 }
 
 class UserLoginMapper{

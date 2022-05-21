@@ -9,7 +9,7 @@ data class UserDto(
     val id: Int,
     val surname: String,
     val name: String,
-    val patronymic: String,
+    val patronymic: String? = null,
     val username: String,
     val role: Role
 )
@@ -30,7 +30,7 @@ data class ChangeUserDto(
     val name: String? = null,
     val patronymic: String? = null,
     val username: String? = null,
-    val password: String?=null,
+    val password: String? = null,
     val role: Role? = null
 )
 
