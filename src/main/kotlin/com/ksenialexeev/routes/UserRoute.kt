@@ -37,9 +37,10 @@ fun Route.userRouting() {
         }
 
         authenticate("auth-jwt-moderator", "auth-jwt-reader", "auth-jwt-admin", "auth-jwt-common") {
-            get("{id}") {
-                call.parameters["id"]?.toInt()?.let { it1 -> userManager.getUser(it1) }
-                    ?.let { it2 -> call.respond(it2) }
+            get() {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asInt()
+                call.respond(userManager.getUser(userId))
             }
             put("change-password") {
                 val userData = call.receive<ChangePasswordDto>()
@@ -73,7 +74,7 @@ fun Route.userRouting() {
                 .withClaim("id", userManager.login(authUser.username, authUser.password))
                 .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
                 .sign(algorithm)
-            call.respond(TokenPair(access, refresh, user))
+            call.respond(TokenPair(access, refresh))
 
         }
 
@@ -89,7 +90,7 @@ fun Route.userRouting() {
             val refresh = JWT.create().withAudience(audience).withIssuer(issuer).withClaim("id", userId)
                 .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
                 .sign(algorithm)
-            call.respond(TokenPair(access, refresh, userId))
+            call.respond(TokenPair(access, refresh))
         }
     }
 

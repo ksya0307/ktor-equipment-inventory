@@ -147,7 +147,7 @@ fun Application.userRouting() {
                             .withClaim("id", userManager.login(authUser.username, authUser.password))
                             .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
                             .sign(algorithm)
-                        call.respond(TokenPair(access, refresh, user))
+                        call.respond(TokenPair(access, refresh))
                     }
                 }
 

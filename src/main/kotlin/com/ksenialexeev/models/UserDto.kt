@@ -43,4 +43,4 @@ data class ChangePasswordDto(
 data class UserLoginDto(val username: String, val password: String)
 
 @Serializable
-data class TokenPair(val accessToken: String, val refreshToken: String, val userId:Int)
+data class TokenPair(val accessToken: String, val refreshToken: String)
