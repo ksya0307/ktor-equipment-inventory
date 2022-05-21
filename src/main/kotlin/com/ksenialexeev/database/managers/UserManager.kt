@@ -28,6 +28,7 @@ interface UserManager {
     suspend fun checkAdmin(id: Int): Boolean
     suspend fun checkCommon(id: Int): Boolean
     suspend fun getUser(id: Int): UserDto
+    suspend fun allUsers():List<UserDto>
     suspend fun changeUser(
         id: Int,
         role: Role?,
@@ -37,7 +38,7 @@ interface UserManager {
         username: String?,
         password: String?
     ): UserDto
-
+    suspend fun existingUser(id:Int): HttpStatusCode
     suspend fun changePassword(id: Int, password: String): UserDto
     suspend fun delete(id: Int): HttpStatusCode
 }
@@ -104,6 +105,10 @@ class UserManagerImpl : UserManager, KoinComponent {
         User.findById(id)?.let { mapperGetUser(it) } ?: throw NotFoundException("User", id)
     }
 
+    override suspend fun allUsers()= newSuspendedTransaction(Dispatchers.IO) {
+        User.all().map(mapperGetUser::invoke)
+    }
+
     override suspend fun changeUser(
         id: Int,
         role: Role?,
@@ -136,6 +141,10 @@ class UserManagerImpl : UserManager, KoinComponent {
                 mapperGetUser(it)
             } ?: throw NotFoundException("Changes of User", id)
         }
+
+    override suspend fun existingUser(id: Int)= newSuspendedTransaction(Dispatchers.IO) {
+        User.findById(id)?.let { HttpStatusCode.OK } ?: throw NotFoundException("User not exist", id)
+    }
 
     override suspend fun changePassword(id: Int, password: String) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let {

@@ -18,6 +18,14 @@ fun Route.userRouting() {
 
     route("users") {
         authenticate("auth-jwt-admin") {
+            get(){
+                call.respond(userManager.allUsers())
+            }
+            get("{id}"){
+                call.parameters["id"]?.let {  userManager.existingUser(it.toInt()) }
+                    ?.let { call.respondText("User with ${call.parameters["id"]} exists") }
+
+            }
             put {
                 val userData = call.receive<ChangeUserDto>()
                 userManager.changeUser(
