@@ -18,10 +18,10 @@ fun Route.userRouting() {
 
     route("users") {
         authenticate("auth-jwt-admin") {
-            get(){
+            get("all"){
                 call.respond(userManager.allUsers())
             }
-            get("{id}"){
+            get("existing-user/{id}"){
                 call.parameters["id"]?.let {  userManager.existingUser(it.toInt()) }
                     ?.let { call.respondText("User with ${call.parameters["id"]} exists") }
 
