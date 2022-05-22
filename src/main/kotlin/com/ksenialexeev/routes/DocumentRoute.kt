@@ -1,8 +1,7 @@
 package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.DocumentManager
-import com.ksenialexeev.models.ChangeDocumentDto
-import com.ksenialexeev.models.DocumentDto
+import com.ksenialexeev.models.CreateOrChangeDocumentDto
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.request.*
@@ -19,12 +18,12 @@ fun Route.documentRouting(){
                 call.respond(documentManager.getAll())
             }
             post {
-                val documentData = call.receive<DocumentDto>()
+                val documentData = call.receive<CreateOrChangeDocumentDto>()
                 documentManager.create(documentData)
                 call.respondText("Document ${documentData.name} created")
             }
             put ("{id}"){
-                val documentData = call.receive<ChangeDocumentDto>()
+                val documentData = call.receive<CreateOrChangeDocumentDto>()
                 call.parameters["id"]?.let {  documentManager.update(it.toInt(), documentData.name) }
                 call.respondText("Document updated")
             }

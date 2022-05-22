@@ -4,7 +4,7 @@ import com.ksenialexeev.database.tables.Document
 import com.ksenialexeev.database.tables.Documents
 import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.DocumentMapper
-import com.ksenialexeev.models.ChangeDocumentDto
+import com.ksenialexeev.models.CreateOrChangeDocumentDto
 import com.ksenialexeev.models.DocumentDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +15,7 @@ import org.koin.core.component.inject
 
 interface DocumentManager {
     suspend fun getAll(): List<DocumentDto>
-    suspend fun create(dto: DocumentDto): DocumentDto
+    suspend fun create(dto: CreateOrChangeDocumentDto): DocumentDto
     suspend fun update(id:Int, name:String): DocumentDto
     suspend fun delete(id: Int): HttpStatusCode
 }
@@ -28,7 +28,7 @@ class DocumentManagerImpl : DocumentManager, KoinComponent {
         Document.all().map(mapper::invoke)
     }
 
-    override suspend fun create(dto: DocumentDto) = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun create(dto: CreateOrChangeDocumentDto) = newSuspendedTransaction(Dispatchers.IO) {
         val document = Document.find { Documents.name.lowerCase() eq dto.name.lowercase() }
         if (document.empty()) {
             Document.new {

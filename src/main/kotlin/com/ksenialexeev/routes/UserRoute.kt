@@ -21,11 +21,6 @@ fun Route.userRouting() {
             get("all"){
                 call.respond(userManager.allUsers())
             }
-            get("existing-user/{id}"){
-                call.parameters["id"]?.let {  userManager.existingUser(it.toInt()) }
-                    ?.let { call.respondText("User with ${call.parameters["id"]} exists") }
-
-            }
             put {
                 val userData = call.receive<ChangeUserDto>()
                 userManager.changeUser(
@@ -56,6 +51,11 @@ fun Route.userRouting() {
                 val userId = principal!!.payload.getClaim("id").asInt()
                 userManager.changePassword(userId, userData.password)
                 call.respondText("Password Changed")
+            }
+            get("existing-user/{id}"){
+                call.parameters["id"]?.let {  userManager.existingUser(it.toInt()) }
+                    ?.let { call.respondText("User with ${call.parameters["id"]} exists") }
+
             }
         }
     }
