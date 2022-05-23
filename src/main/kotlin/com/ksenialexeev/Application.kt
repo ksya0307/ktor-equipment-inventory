@@ -22,7 +22,7 @@ import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 
 val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: (60000 * 15)
-val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((60000 * 24 * 3))) ?: (60000 * 24 * 3)
+val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((60000 * 24))) ?: (60000 * 24 * 5)
 
 val audience = System.getenv("AUDIENCE")?.toString() ?: "audience"
 val myRealm = System.getenv("REALM")?.toString() ?: "Access to 'login'"
@@ -59,6 +59,7 @@ fun main() {
                         null
                     }
                 }
+                //Specifies what to send back if jwt authentication fails.
                 challenge { defaultScheme, realm->
                     call.respond(HttpStatusCode.Unauthorized, "Access Token is not valid or has expired")
                 }

@@ -106,19 +106,19 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
         number_in_classroom: String?,
         equipment_type: EquipmentBelonging?
     ) = newSuspendedTransaction(Dispatchers.IO) {
-        val classroomId = Classroom.find { Classrooms.id eq classroom.toString() }.firstOrNull()
-        val equipmentId = Equipment.find { Equipments.description eq equipment.toString() }.firstOrNull()
+        val classroom = Classroom.find { Classrooms.id eq classroom.toString() }.firstOrNull()
+        val equipment = Equipment.find { Equipments.description eq equipment.toString() }.firstOrNull()
         ClassroomsEquipment.findById(id)?.let {
             if (inventory_number != null) {
                 it.inventory_number = inventory_number
             }
 
-            it.classroom = classroomId
+            it.classroom = classroom
             if (number_in_classroom != null) {
                 it.number_in_classroom = number_in_classroom
             }
-            if (equipmentId != null) {
-                it.equipment = equipmentId
+            if (equipment != null) {
+                it.equipment = equipment
             }
             if (equipment_type != null) {
                 it.equipment_type = equipment_type
