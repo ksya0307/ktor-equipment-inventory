@@ -82,6 +82,9 @@ fun Route.userRouting() {
                 .withClaim("id", user)
                 .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenPeriod))
                 .sign(algorithm)
+            println(accessTokenPeriod)
+            println(refreshTokenPeriod)
+            println(System.currentTimeMillis())
             call.respond(TokenPair(access, refresh))
 
         }

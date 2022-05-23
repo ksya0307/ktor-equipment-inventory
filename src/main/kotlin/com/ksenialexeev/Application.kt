@@ -21,8 +21,8 @@ import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 
-val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: (60000 * 15)
-val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((60000 * 24))) ?: (60000 * 24 * 5)
+val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: (60000 * 15) //millis
+val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((60000 * 24))) ?: ( 86400000  * 5)//millis
 
 val audience = System.getenv("AUDIENCE")?.toString() ?: "audience"
 val myRealm = System.getenv("REALM")?.toString() ?: "Access to 'login'"
