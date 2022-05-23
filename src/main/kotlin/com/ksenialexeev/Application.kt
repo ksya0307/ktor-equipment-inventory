@@ -22,7 +22,7 @@ import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 
 val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: (60000 * 15) //millis
-val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((60000 * 24))) ?: ( 86400000  * 5)//millis
+val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((86400000))) ?: ( 86400000  * 5)//millis
 
 val audience = System.getenv("AUDIENCE")?.toString() ?: "audience"
 val myRealm = System.getenv("REALM")?.toString() ?: "Access to 'login'"
