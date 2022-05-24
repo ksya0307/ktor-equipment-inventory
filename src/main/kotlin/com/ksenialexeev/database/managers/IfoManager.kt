@@ -27,7 +27,7 @@ class IfoManagerImpl : IfoManager, KoinComponent {
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        Ifo.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw  NotFoundException("Ifo", id)
+        Ifo.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw  NotFoundException("Ifo not found:", id)
     }
 
     override suspend fun update(id: Int, name: String) = newSuspendedTransaction(Dispatchers.IO) {
@@ -49,7 +49,7 @@ class IfoManagerImpl : IfoManager, KoinComponent {
                 name = dto.name
             }.let { mapper(it) }
         } else {
-            throw NotFoundException("Ifo", dto.name)
+            throw NotFoundException("Ifo already exists:", dto.name)
         }
 
     }

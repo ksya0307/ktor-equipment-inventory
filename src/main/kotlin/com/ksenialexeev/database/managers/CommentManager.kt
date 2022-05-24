@@ -34,7 +34,7 @@ class CommentManagerImpl : CommentManager, KoinComponent {
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        Comment.findById(id)?.let { it.delete();HttpStatusCode.OK }?: throw NotFoundException("Comment",id)
+        Comment.findById(id)?.let { it.delete();HttpStatusCode.OK }?: throw NotFoundException("Comment not found:",id)
     }
 
     override suspend fun update(id: Int, comment: String?) = newSuspendedTransaction(Dispatchers.IO) {
@@ -43,7 +43,7 @@ class CommentManagerImpl : CommentManager, KoinComponent {
                 it.comment = comment
             }
             mapper(it)
-        } ?: throw NotFoundException("Comment", id)
+        } ?: throw NotFoundException("Comment not found", id)
     }
 
 }

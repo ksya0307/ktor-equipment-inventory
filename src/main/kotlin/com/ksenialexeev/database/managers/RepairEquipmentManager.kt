@@ -52,7 +52,7 @@ class RepairEquipmentManagerImpl : RepairEquipmentManager, KoinComponent {
             }.withDistinct()
             .let {
                 if (it.empty()) {
-                    throw NotFoundException("user_id", user_id)
+                    throw NotFoundException("User not found:", user_id)
                 } else {
                     RepairEquipment.wrapRows(it).map { repairs -> mapper(repairs) }
                 }

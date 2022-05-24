@@ -45,8 +45,8 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
             val eqi: Equipment? = equipmentCategory?.let { category ->
                 Category.find { Categories.name eq category }.firstOrNull()?.let {
                     Equipment.find { Equipments.category eq it.id }.firstOrNull()
-                        ?: throw NotFoundException("Equipment", it.id.value)
-                } ?: throw NotFoundException("Category", category)
+                        ?: throw NotFoundException("Equipment with id ${it.id.value}not found","")
+                } ?: throw NotFoundException("Category not found", category)
             }
             run {
                 if (classroom == null && eqi != null) {
@@ -70,7 +70,7 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
     override suspend fun getSpecsById(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         ClassroomsEquipment.findById(id)?.let {
             mapperSpecs(it)
-        }?: throw NotFoundException("Equipment Specs", id)
+        }?: throw NotFoundException("Cannot find these specs", "")
     }
 
     override suspend fun create(dto: CreateClassroomEquipmentDto) = newSuspendedTransaction(Dispatchers.IO) {
@@ -124,7 +124,7 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
                 it.equipment_type = equipment_type
             }
             mapper(it)
-        } ?: throw NotFoundException("Changes of ClassroomEquipment", id)
+        } ?: throw NotFoundException("This equipment already exists", "")
     }
 
     override suspend fun delete(id: Int)= newSuspendedTransaction(Dispatchers.IO) {

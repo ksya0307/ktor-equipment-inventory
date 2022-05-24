@@ -45,7 +45,7 @@ class DocumentManagerImpl : DocumentManager, KoinComponent {
             Document.findById(id)?.let {
                 it.name = name
                 mapper(it)
-            } ?: throw NotFoundException("Document", id)
+            } ?: throw NotFoundException("Document not found:", id)
         } else {
             throw NotFoundException("Document already exists", name)
         }
@@ -53,7 +53,7 @@ class DocumentManagerImpl : DocumentManager, KoinComponent {
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        Document.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw  NotFoundException("Document", id)
+        Document.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw  NotFoundException("Document not found:", id)
     }
 
 }

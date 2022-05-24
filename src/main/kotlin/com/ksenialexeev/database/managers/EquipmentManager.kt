@@ -28,11 +28,11 @@ class EquipmentManagerImpl : EquipmentManager, KoinComponent {
     private val mapper by inject<EquipmentMapper>()
 
     override suspend fun getById(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        Equipment.findById(id)?.let { mapper(it) } ?: throw NotFoundException("Equipment", id)
+        Equipment.findById(id)?.let { mapper(it) } ?: throw NotFoundException("Equipment not found", id)
     }
 
     override suspend fun create(dto: CreateEquipmentDto) = newSuspendedTransaction(Dispatchers.IO) {
-        val categoryEntity = Category.findById(dto.category) ?: throw NotFoundException("Equipment", dto.category)
+        val categoryEntity = Category.findById(dto.category) ?: throw NotFoundException("Category not found:", dto.category)
         val descriptionEntity = Equipment.find { Equipments.description.lowerCase() eq dto.description.lowercase() }
         if(descriptionEntity.empty()){
             Equipment.new {
@@ -50,12 +50,12 @@ class EquipmentManagerImpl : EquipmentManager, KoinComponent {
     }
 
     override suspend fun delete(id: Int)= newSuspendedTransaction(Dispatchers.IO) {
-        Equipment.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw NotFoundException("Equipment", id)
+        Equipment.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw NotFoundException("Equipment not found:", id)
     }
 
     override suspend fun update(id: Int, description: String, categoryId: Int) {
         val equipment = Equipment.find { Equipments.description.lowerCase() eq description.lowercase() }
-        val category = Category.findById(categoryId) ?: throw NotFoundException("Equipment",categoryId)
+        val category = Category.findById(categoryId) ?: throw NotFoundException("Equipment not found:",categoryId)
         if(equipment.empty()){
            Equipment.findById(id)?.let {
                it.description = description

@@ -27,7 +27,7 @@ class InventoryManagerImpl : InventoryManager, KoinComponent {
     }
 
     override suspend fun delete(id: Int)= newSuspendedTransaction(Dispatchers.IO)  {
-        Inventory.findById(id)?.let { it.delete();HttpStatusCode.OK } ?: throw NotFoundException("Inventory",id)
+        Inventory.findById(id)?.let { it.delete();HttpStatusCode.OK } ?: throw NotFoundException("Inventory not found",id)
     }
 
     override suspend fun create(dto: CreateInventoryDto): InventoryDto {

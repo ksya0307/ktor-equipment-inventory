@@ -46,15 +46,15 @@ class RepairManagerImpl:RepairManager, KoinComponent {
            it.phone = phone
            it.datetime = datetime
            mapper(it)
-       }?: throw NotFoundException("Repair", id)
+       }?: throw NotFoundException("Repair not found:", id)
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-       Repair.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?:  throw  NotFoundException("Repair", id)
+       Repair.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?:  throw  NotFoundException("Repair not found", id)
     }
 
     override suspend fun getById(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        Repair.findById(id)?.let { mapper(it) } ?: throw NotFoundException("Repair", id)
+        Repair.findById(id)?.let { mapper(it) } ?: throw NotFoundException("Repair not found:", id)
     }
 
 }

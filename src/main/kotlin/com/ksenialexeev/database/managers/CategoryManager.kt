@@ -38,12 +38,12 @@ class CategoryManagerImpl : CategoryManager, KoinComponent {
                 name = dto.name
             }.let { mapper(it) }
         } else {
-            throw  NotFoundException("Category already exists", dto.name)
+            throw  NotFoundException("Category with name ${dto.name} already exists", "Make up a new name")
         }
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        Category.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw NotFoundException("Category", id)
+        Category.findById(id)?.let { it.delete(); HttpStatusCode.OK } ?: throw NotFoundException("Category with id $id not found", "")
     }
 
     override suspend fun getAll(): List<CategoryDto> = newSuspendedTransaction(Dispatchers.IO) {
@@ -56,9 +56,9 @@ class CategoryManagerImpl : CategoryManager, KoinComponent {
             Category.findById(id)?.let {
                 it.name = name
                 mapper(it)
-            } ?: throw NotFoundException("Category", id)
+            } ?: throw NotFoundException("Category with id $id not found", "")
         }else {
-            throw NotFoundException("Category already exists", name)
+            throw NotFoundException("Category already exists:", name)
         }
     }
 }

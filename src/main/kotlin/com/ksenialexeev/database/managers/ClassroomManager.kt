@@ -53,7 +53,7 @@ class ClassroomManagerImpl : ClassroomManager, KoinComponent {
                     user = User.findById(dto.user) ?: throw NotFoundException("User not found", dto.user)
                 }.let { mapper(it) }
             } else {
-                throw NotFoundException("Classroom already exists", dto.number)
+                throw NotFoundException("Classroom already exists:", dto.number)
             }
     }
 

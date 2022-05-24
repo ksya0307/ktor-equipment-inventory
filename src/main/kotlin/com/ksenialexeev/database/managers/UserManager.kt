@@ -139,7 +139,7 @@ class UserManagerImpl : UserManager, KoinComponent {
                     it.password = encryptPassword(password)
                 }
                 mapperGetUser(it)
-            } ?: throw NotFoundException("Changes of User", id)
+            } ?: throw NotFoundException("User not found", id)
         }
 
     override suspend fun existingUser(id: Int)= newSuspendedTransaction(Dispatchers.IO) {
@@ -150,11 +150,11 @@ class UserManagerImpl : UserManager, KoinComponent {
         User.findById(id)?.let {
             it.password = encryptPassword(password)
             mapperGetUser(it)
-        } ?: throw NotFoundException("User with id not changed", id)
+        } ?: throw NotFoundException("User with id ${id} not changed", "")
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        User.findById(id)?.let { it.delete();HttpStatusCode.OK } ?: throw NotFoundException("User", id)
+        User.findById(id)?.let { it.delete();HttpStatusCode.OK } ?: throw NotFoundException("User with ${id} not found", "")
     }
 
 }
