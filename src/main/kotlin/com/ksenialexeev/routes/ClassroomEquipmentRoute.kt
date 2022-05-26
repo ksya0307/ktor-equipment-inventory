@@ -22,9 +22,15 @@ fun Route.classroomEquipment() {
                 )
             }
             get("{id}"){
-                call.parameters["id"]?.let { it1 -> classroomEquipmentManager.getSpecsById(it1.toInt()) }
-                    ?.let { it2 -> call.respond(it2) }
+                call.parameters["id"]?.let { classroomEquipmentManager.getSpecsById(it.toInt()) }
+                    ?.let { it1 -> call.respond(it1) }
             }
+            get("equipment-in-users-classrooms/{user-id}"){
+                call.parameters["user-id"]?.let { classroomEquipmentManager.getUsersEquipmentInClassrooms(
+                        it.toInt()) }?.let { it1 -> call.respond(it1) }
+            }
+
+
         }
         authenticate("auth-jwt-moderator", "auth-jwt-admin") {
             post {
