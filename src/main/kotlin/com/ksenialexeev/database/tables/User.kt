@@ -12,7 +12,7 @@ object Users:IntIdTable("users"){
     val patronymic = varchar("patronymic",64).nullable()
     val username = varchar("username",64)
     val password = text("password")
-    val role = enumeration("role", Role::class).default(Role.common)
+    val role = enumeration("role", Role::class).default(Role.COMMON)
 }
 
 class User(id:EntityID<Int>):IntEntity(id){
@@ -26,5 +26,5 @@ class User(id:EntityID<Int>):IntEntity(id){
     var role by Users.role
 }
 
-enum class Role { admin, moderator, teacher, common }
+enum class Role { ADMIN, MODERATOR, TEACHER, COMMON }
 //0 1 2 3

@@ -23,6 +23,7 @@ data class CreateUserDto(
     val password: String,
 )
 
+
 @Serializable
 data class ChangeUserDto(
     val id: Int,
