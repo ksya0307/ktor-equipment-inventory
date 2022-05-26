@@ -5,6 +5,7 @@ import com.ksenialexeev.models.CreateClassroomEquipmentDto
 import com.ksenialexeev.models.UpdateClassroomEquipmentDto
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.auth.jwt.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -25,9 +26,11 @@ fun Route.classroomEquipment() {
                 call.parameters["id"]?.let { classroomEquipmentManager.getSpecsById(it.toInt()) }
                     ?.let { it1 -> call.respond(it1) }
             }
-            get("equipment-in-users-classrooms/{user-id}"){
-                call.parameters["user-id"]?.let { classroomEquipmentManager.getUsersEquipmentInClassrooms(
-                        it.toInt()) }?.let { it1 -> call.respond(it1) }
+            get(
+                "equipment-in-users-classrooms"){
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asInt()
+                call.respond(classroomEquipmentManager.getUsersEquipmentInClassrooms(userId))
             }
 
 
