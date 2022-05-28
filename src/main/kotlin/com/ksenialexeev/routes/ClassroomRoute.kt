@@ -5,6 +5,7 @@ import com.ksenialexeev.models.ClassroomDto
 import com.ksenialexeev.models.CreateClassroomDto
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.auth.jwt.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -17,9 +18,10 @@ fun Route.classroomRouting() {
             get {
                 call.respond(classroomManager.getAllClassrooms())
             }
-            get("{user-id}") {
-                call.parameters["user-id"]?.let { it1 -> classroomManager.getClassroomsByUser(it1.toInt()) }
-                    ?.let { it2 -> call.respond(it2) }
+            get("user-classrooms") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asInt()
+                call.respond(classroomManager.getClassroomsByUser(userId))
             }
         }
         authenticate("auth-jwt-admin") {

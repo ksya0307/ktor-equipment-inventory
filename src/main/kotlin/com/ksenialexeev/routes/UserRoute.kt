@@ -37,6 +37,11 @@ fun Route.userRouting() {
                     ?.let { call.respondText("User with Id ${call.parameters["id"]} deleted") }
 
             }
+            put("change-password/{user-id}") {
+                val userData = call.receive<ChangePasswordDto>()
+                call.parameters["user-id"]?.let { it -> userManager.changePassword(it.toInt(), userData.password) }
+                call.respondText("Password Changed")
+            }
         }
 
         authenticate("auth-jwt-moderator", "auth-jwt-teacher", "auth-jwt-admin", "auth-jwt-common") {
@@ -52,6 +57,7 @@ fun Route.userRouting() {
                 userManager.changePassword(userId, userData.password)
                 call.respondText("Password Changed")
             }
+
             get("existing-user/{id}"){
                 call.parameters["id"]?.let {  userManager.existingUser(it.toInt()) }
                     ?.let { call.respondText("User with ${call.parameters["id"]} exists") }
