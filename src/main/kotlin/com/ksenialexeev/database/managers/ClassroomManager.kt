@@ -1,15 +1,14 @@
 package com.ksenialexeev.database.managers
 
-import com.ksenialexeev.database.tables.Classroom
-import com.ksenialexeev.database.tables.Classrooms
-import com.ksenialexeev.database.tables.User
+import com.ksenialexeev.database.tables.*
 import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.ClassroomMapper
 import com.ksenialexeev.models.ClassroomDto
-import com.ksenialexeev.models.CreateClassroomDto
+import com.ksenialexeev.models.CreateOrUpdateClassroomDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -20,7 +19,8 @@ interface ClassroomManager {
     suspend fun getAllClassrooms(): List<ClassroomDto?>
     suspend fun getClassroomsByUser(id: Int): List<ClassroomDto?>
     suspend fun deleteByNumber(number: String): HttpStatusCode
-    suspend fun create(dto: CreateClassroomDto): ClassroomDto?
+    suspend fun create(dto: CreateOrUpdateClassroomDto): ClassroomDto?
+    suspend fun update(dto: CreateOrUpdateClassroomDto) : ClassroomDto?
 }
 
 class ClassroomManagerImpl : ClassroomManager, KoinComponent {
@@ -45,7 +45,7 @@ class ClassroomManagerImpl : ClassroomManager, KoinComponent {
         )
     }
 
-    override suspend fun create(dto: CreateClassroomDto) = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun create(dto: CreateOrUpdateClassroomDto) = newSuspendedTransaction(Dispatchers.IO) {
         val existingClassroom = Classroom.findById(dto.number.lowercase())
             if (existingClassroom == null) {
 
@@ -55,6 +55,22 @@ class ClassroomManagerImpl : ClassroomManager, KoinComponent {
             } else {
                 throw NotFoundException("Classroom already exists:", dto.number)
             }
+    }
+
+    override suspend fun update(dto: CreateOrUpdateClassroomDto) = newSuspendedTransaction(Dispatchers.IO) {
+        val classroom = Classroom.findById(dto.number.lowercase())
+        val user = User.findById(dto.user)
+        if(classroom == null){
+            Classroom.findById(dto.number)?.let {
+               // it.id = dto.number
+                if (user != null) {
+                    it.user = user
+                }
+                mapper(it)
+            } ?: throw NotFoundException("Classroom with id ${dto.number} not found", "")
+        }else {
+            throw NotFoundException("Classroom already exists:", dto.number)
+        }
     }
 
 }

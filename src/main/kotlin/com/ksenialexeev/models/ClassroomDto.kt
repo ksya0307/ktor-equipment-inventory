@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class ClassroomDto(val number:String, val user: UserDto)
 
 @Serializable
-data class CreateClassroomDto(val number: String, val user:Int)
+data class CreateOrUpdateClassroomDto(val number: String, val user:Int)
 
 

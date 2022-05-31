@@ -23,6 +23,11 @@ fun Route.categoryRouting() {
             get {
                 call.respond( categoryManager.getAll())
             }
+            get("categories-in-classroom"){
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asInt()
+                call.respond(categoryManager.categoryByUserClassroom(userId))
+            }
         }
         authenticate("auth-jwt-moderator", "auth-jwt-admin") {
             post{

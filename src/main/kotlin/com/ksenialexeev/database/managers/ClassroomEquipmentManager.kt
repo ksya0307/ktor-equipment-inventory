@@ -42,6 +42,7 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
     private val mapperSpecs by inject<EquipmentSpecsMapper>()
 
     override suspend fun getAllClassroomEquipmentByClassroomAndCategory(
+
         classroom: String?,
         equipmentCategory: String?
     ): List<ClassroomEquipmentDto?> =
@@ -49,9 +50,11 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
             val eqi: Equipment? = equipmentCategory?.let { category ->
                 Category.find { Categories.name eq category }.firstOrNull()?.let {
                     Equipment.find { Equipments.category eq it.id }.firstOrNull()
-                        ?: throw NotFoundException("Equipment with id ${it.id.value}not found", "")
+                        ?: throw NotFoundException("Equipment with id ${it.id.value} not found", "")
                 } ?: throw NotFoundException("Category not found", category)
             }
+
+            val classroomEntity: Classroom? = classroom?.let { Classroom.findById(it) }
             run {
                 if (classroom == null && eqi != null) {
                     ClassroomsEquipment.find {
@@ -65,7 +68,8 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
                     ClassroomsEquipment.find {
                         (ClassroomsEquipments.classroom eq classroom) and (ClassroomsEquipments.equipment eq eqi.id)
                     }
-                } else {
+                }
+                else {
                     ClassroomsEquipment.all()
                 }
             }.map(mapper::invoke)
@@ -144,9 +148,9 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
             .select { Classrooms.user eq userId }
             .withDistinct()
             .let {
-                if(it.empty()){
+                if (it.empty()) {
                     throw NotFoundException("User with id $userId not found", "Try another one")
-                }else{
+                } else {
                     ClassroomsEquipment.wrapRows(it).map { equipments -> mapper(equipments) }
                 }
             }

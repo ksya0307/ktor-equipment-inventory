@@ -2,7 +2,7 @@ package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.ClassroomManager
 import com.ksenialexeev.models.ClassroomDto
-import com.ksenialexeev.models.CreateClassroomDto
+import com.ksenialexeev.models.CreateOrUpdateClassroomDto
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -31,7 +31,7 @@ fun Route.classroomRouting() {
                 }
             }
             post{
-                val classroomData = call.receive<CreateClassroomDto>()
+                val classroomData = call.receive<CreateOrUpdateClassroomDto>()
                 classroomManager.create(classroomData).let { call.respondText("Classroom ${classroomData.number} created") }
             }
         }
