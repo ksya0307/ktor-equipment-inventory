@@ -4,6 +4,7 @@ import com.ksenialexeev.database.tables.Ifo
 import com.ksenialexeev.database.tables.Ifos
 import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.IfoMapper
+import com.ksenialexeev.models.CreateOrUpdateIfoDto
 import com.ksenialexeev.models.IfoDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ interface IfoManager {
     suspend fun getAll(): List<IfoDto>
     suspend fun delete(id: Int): HttpStatusCode
     suspend fun update(id: Int, name: String): IfoDto
-    suspend fun create(dto: IfoDto): IfoDto
+    suspend fun create(dto: CreateOrUpdateIfoDto): IfoDto
 }
 
 class IfoManagerImpl : IfoManager, KoinComponent {
@@ -42,7 +43,7 @@ class IfoManagerImpl : IfoManager, KoinComponent {
         }
     }
 
-    override suspend fun create(dto: IfoDto) = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun create(dto: CreateOrUpdateIfoDto) = newSuspendedTransaction(Dispatchers.IO) {
         val ifo = Ifo.find { Ifos.name.lowerCase() eq dto.name.lowercase() }
         if (ifo.empty()) {
             Ifo.new {

@@ -2,7 +2,7 @@ package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.IfoManager
 import com.ksenialexeev.models.IfoDto
-import com.ksenialexeev.models.UpdateIfoDto
+import com.ksenialexeev.models.CreateOrUpdateIfoDto
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.request.*
@@ -19,13 +19,13 @@ fun Route.ifoRouting(){
                 call.respond(ifoManager.getAll())
             }
             post {
-                val ifoData = call.receive<IfoDto>()
+                val ifoData = call.receive<CreateOrUpdateIfoDto>()
                 ifoManager.create(ifoData)
                 call.respondText("Ifo with name ${ifoData.name} created")
             }
             put {
-                val ifoData = call.receive<UpdateIfoDto>()
-                ifoManager.update(ifoData.id, ifoData.name)
+                val ifoData = call.receive<CreateOrUpdateIfoDto>()
+                ifoData.id?.let { it -> ifoManager.update(it, ifoData.name) }
                 call.respondText("Ifo with Id ${ifoData.id} updated")
             }
             delete("{id}") {

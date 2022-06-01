@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class IfoDto(val id:Int,val name:String)
 
 @Serializable
-data class UpdateIfoDto(val id:Int, val name: String)
+data class CreateOrUpdateIfoDto(val id:Int? = null, val name: String)
 
 
 
