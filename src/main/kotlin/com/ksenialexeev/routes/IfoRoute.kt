@@ -10,10 +10,10 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
-fun Route.ifoRouting(){
+fun Route.ifoRouting() {
     val ifoManager by inject<IfoManager>()
 
-    route("ifo"){
+    route("ifo") {
         authenticate("auth-jwt-moderator", "auth-jwt-admin") {
             get {
                 call.respond(ifoManager.getAll())
@@ -23,13 +23,13 @@ fun Route.ifoRouting(){
                 ifoManager.create(ifoData)
                 call.respondText("Ifo with name ${ifoData.name} created")
             }
-            put {
+            put("{id}") {
                 val ifoData = call.receive<CreateOrUpdateIfoDto>()
-                ifoData.id?.let { it -> ifoManager.update(it, ifoData.name) }
+                call.parameters["id"]?.let { it -> ifoManager.update(it.toInt(), ifoData.name) }
                 call.respondText("Ifo with Id ${ifoData.id} updated")
             }
             delete("{id}") {
-                call.parameters["id"]?.let {  ifoManager.delete(it.toInt()) }
+                call.parameters["id"]?.let { ifoManager.delete(it.toInt()) }
                     ?.let { call.respondText("IFO with Id ${call.parameters["id"]} deleted") }
             }
         }
