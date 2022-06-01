@@ -21,6 +21,7 @@ data class CreateUserDto(
     val patronymic: String? = null,
     val username: String,
     val password: String,
+    val role: Role? = Role.COMMON
 )
 
 

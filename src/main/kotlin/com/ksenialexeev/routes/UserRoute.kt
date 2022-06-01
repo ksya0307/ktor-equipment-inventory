@@ -72,7 +72,7 @@ fun Route.userRouting() {
             userManager.signup(newUser)
             call.respondText(
                 "User been created ${newUser.surname}, ${newUser.name}, ${newUser.patronymic}," +
-                        " ${newUser.username}, ${newUser.password}"
+                        " ${newUser.username}, ${newUser.role}"
             )
         }
     }

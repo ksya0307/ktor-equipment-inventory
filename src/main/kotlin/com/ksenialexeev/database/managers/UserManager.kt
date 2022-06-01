@@ -78,6 +78,9 @@ class UserManagerImpl : UserManager, KoinComponent {
                 }
                 username = dto.username
                 password = encryptPassword(dto.password)
+                if(dto.role !=null){
+                    role = dto.role
+                }
             }.let { mapper(it) }
         } else {
             throw NotFoundException("User already exists", dto.username)
