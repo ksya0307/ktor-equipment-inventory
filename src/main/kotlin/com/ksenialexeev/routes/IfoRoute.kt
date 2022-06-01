@@ -25,8 +25,8 @@ fun Route.ifoRouting() {
             }
             put("{id}") {
                 val ifoData = call.receive<CreateOrUpdateIfoDto>()
-                call.parameters["id"]?.let { it -> ifoManager.update(it.toInt(), ifoData.name) }
-                call.respondText("Ifo with Id ${ifoData.id} updated")
+                call.parameters["id"]?.let { it -> ifoManager.update(it.toInt(), ifoData.name) }.let {  call.respondText("Ifo with Id ${call.parameters["id"]} updated")}
+
             }
             delete("{id}") {
                 call.parameters["id"]?.let { ifoManager.delete(it.toInt()) }
