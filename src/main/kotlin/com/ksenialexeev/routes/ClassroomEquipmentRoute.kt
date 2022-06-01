@@ -39,7 +39,7 @@ fun Route.classroomEquipment() {
             post {
                 val newClEq = call.receive<CreateClassroomEquipmentDto>()
                 println("${newClEq.classroom} ${newClEq.number_in_classroom}")
-                val clEq = classroomEquipmentManager.create(newClEq)
+                classroomEquipmentManager.create(newClEq)
 
                 call.respondText("Classroom Equipment created")
             }

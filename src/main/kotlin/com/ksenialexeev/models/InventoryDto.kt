@@ -17,7 +17,7 @@ data class InventoryDto(
 
 @Serializable
 data class CreateInventoryDto(
-    val inventory_number:Long,
+    val inventory_number:Int,
     val get_date: LocalDate,
     val document: String,
     val ifo:String,
