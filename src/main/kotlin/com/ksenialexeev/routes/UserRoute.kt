@@ -55,7 +55,7 @@ fun Route.userRouting() {
                 val principal = call.principal<JWTPrincipal>()
                 val userId = principal!!.payload.getClaim("id").asInt()
                 userManager.changePassword(userId, userData.password)
-                call.respondText("Password Changed")
+                call.respondText("Password Successfully Changed")
             }
 
             get("existing-user/{id}"){
