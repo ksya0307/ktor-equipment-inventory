@@ -12,6 +12,8 @@ import com.ksenialexeev.models.UserLoginDto
 import com.toxicbakery.bcrypt.Bcrypt
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
@@ -109,7 +111,8 @@ class UserManagerImpl : UserManager, KoinComponent {
     }
 
     override suspend fun allUsers()= newSuspendedTransaction(Dispatchers.IO) {
-        User.all().map(mapperGetUser::invoke)
+        User.all().filter { it.role != Role.ADMIN }.map (mapperGetUser::invoke)
+
     }
 
     override suspend fun changeUser(
@@ -123,7 +126,7 @@ class UserManagerImpl : UserManager, KoinComponent {
     ) =
         newSuspendedTransaction(Dispatchers.IO) {
             User.findById(id)?.let {
-                if (role != null && role.name.isNotEmpty()) {
+                if (role != null) {
                     it.role = role
                 }
                 if (surname != null && surname.isNotEmpty()) {
