@@ -123,19 +123,19 @@ class UserManagerImpl : UserManager, KoinComponent {
     ) =
         newSuspendedTransaction(Dispatchers.IO) {
             User.findById(id)?.let {
-                if (role != null) {
+                if (role != null && role.name.isNotEmpty()) {
                     it.role = role
                 }
-                if (surname != null) {
+                if (surname != null && surname.isNotEmpty()) {
                     it.surname = surname
                 }
-                if (name != null) {
+                if (name != null && name.isNotEmpty()) {
                     it.name = name
                 }
-                if (patronymic != null) {
-                    it.patronymic = patronymic
-                }
-                if (username != null) {
+
+                it.patronymic = patronymic
+
+                if (username != null && username.isNotEmpty()) {
                     it.username = username
                 }
                 if (password != null && password.isNotEmpty()) {
