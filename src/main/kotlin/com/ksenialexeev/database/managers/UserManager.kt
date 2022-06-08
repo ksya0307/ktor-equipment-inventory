@@ -125,6 +125,7 @@ class UserManagerImpl : UserManager, KoinComponent {
         password: String?
     ) =
         newSuspendedTransaction(Dispatchers.IO) {
+            var userEntity = username?.let { User.find {Users.username eq it } } ?: throw NotFoundException("User already exists","")
             User.findById(id)?.let {
                 if (role != null) {
                     it.role = role
