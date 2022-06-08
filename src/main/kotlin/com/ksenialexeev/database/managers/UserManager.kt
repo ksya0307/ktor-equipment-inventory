@@ -138,7 +138,7 @@ class UserManagerImpl : UserManager, KoinComponent {
                 if (username != null) {
                     it.username = username
                 }
-                if (password != null) {
+                if (password != null && password.isNotEmpty()) {
                     it.password = encryptPassword(password)
                 }
                 mapperGetUser(it)
