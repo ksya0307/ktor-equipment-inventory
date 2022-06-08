@@ -30,7 +30,7 @@ interface UserManager {
     suspend fun checkAdmin(id: Int): Boolean
     suspend fun checkCommon(id: Int): Boolean
     suspend fun getUser(id: Int): UserDto
-    suspend fun allUsers():List<UserDto>
+    suspend fun allUsers(): List<UserDto>
     suspend fun changeUser(
         id: Int,
         role: Role?,
@@ -40,7 +40,8 @@ interface UserManager {
         username: String?,
         password: String?
     ): UserDto
-    suspend fun existingUser(id:Int): HttpStatusCode
+
+    suspend fun existingUser(id: Int): HttpStatusCode
     suspend fun changePassword(id: Int, password: String): UserDto
     suspend fun delete(id: Int): HttpStatusCode
 }
@@ -61,7 +62,8 @@ class UserManagerImpl : UserManager, KoinComponent {
     override suspend fun login(username: String, password: String) = newSuspendedTransaction(Dispatchers.IO) {
         User.find {
             (Users.username eq username)
-        }.firstOrNull { Bcrypt.verify(password, it.password) }?.id?.value ?: throw NotFoundException("Username or password are invalid","\nType valid data");
+        }.firstOrNull { Bcrypt.verify(password, it.password) }?.id?.value
+            ?: throw NotFoundException("Username or password are invalid", "\nType valid data");
     }
 
     override suspend fun check(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
@@ -80,7 +82,7 @@ class UserManagerImpl : UserManager, KoinComponent {
                 }
                 username = dto.username
                 password = encryptPassword(dto.password)
-                if(dto.role !=null){
+                if (dto.role != null) {
                     role = dto.role
                 }
             }.let { mapper(it) }
@@ -110,8 +112,8 @@ class UserManagerImpl : UserManager, KoinComponent {
         User.findById(id)?.let { mapperGetUser(it) } ?: throw NotFoundException("User", id)
     }
 
-    override suspend fun allUsers()= newSuspendedTransaction(Dispatchers.IO) {
-        User.all().filter { it.role != Role.ADMIN }.map (mapperGetUser::invoke)
+    override suspend fun allUsers() = newSuspendedTransaction(Dispatchers.IO) {
+        User.all().filter { it.role != Role.ADMIN }.map(mapperGetUser::invoke)
 
     }
 
@@ -125,31 +127,38 @@ class UserManagerImpl : UserManager, KoinComponent {
         password: String?
     ) =
         newSuspendedTransaction(Dispatchers.IO) {
-            var userEntity = username?.let { User.find {Users.username eq it } } ?: throw NotFoundException("User already exists","")
-            User.findById(id)?.let {
-                if (role != null) {
-                    it.role = role
-                }
-                if (surname != null && surname.isNotEmpty()) {
-                    it.surname = surname
-                }
-                if (name != null && name.isNotEmpty()) {
-                    it.name = name
-                }
+            var userEntity = username?.let { User.find { Users.username eq it } }?.firstOrNull()
 
-                it.patronymic = patronymic
+            if (userEntity == null) {
+                User.findById(id)?.let {
+                    if (role != null) {
+                        it.role = role
+                    }
+                    if (surname != null && surname.isNotEmpty()) {
+                        it.surname = surname
+                    }
+                    if (name != null && name.isNotEmpty()) {
+                        it.name = name
+                    }
 
-                if (username != null && username.isNotEmpty()) {
-                    it.username = username
-                }
-                if (password != null && password.isNotEmpty()) {
-                    it.password = encryptPassword(password)
-                }
-                mapperGetUser(it)
-            } ?: throw NotFoundException("User not found", id)
+                    it.patronymic = patronymic
+
+                    if (username != null && username.isNotEmpty()) {
+                        it.username = username
+                    }
+                    if (password != null && password.isNotEmpty()) {
+                        it.password = encryptPassword(password)
+                    }
+                    mapperGetUser(it)
+                } ?: throw NotFoundException("User not found", id)
+            } else {
+                throw NotFoundException("User Already Exists", "")
+            }
+
+
         }
 
-    override suspend fun existingUser(id: Int)= newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun existingUser(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
         User.findById(id)?.let { HttpStatusCode.OK } ?: throw NotFoundException("User not exist", id)
     }
 
@@ -161,7 +170,10 @@ class UserManagerImpl : UserManager, KoinComponent {
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        User.findById(id)?.let { it.delete();HttpStatusCode.OK } ?: throw NotFoundException("User with ${id} not found", "")
+        User.findById(id)?.let { it.delete();HttpStatusCode.OK } ?: throw NotFoundException(
+            "User with ${id} not found",
+            ""
+        )
     }
 
 }
