@@ -17,6 +17,11 @@ fun Route.userRouting() {
     val userManager by inject<UserManager>()
 
     route("users") {
+        get("existing-user/{id}"){
+            call.parameters["id"]?.let {  userManager.existingUser(it.toInt()) }
+                ?.let { call.respondText("User with ${call.parameters["id"]} exists") }
+
+        }
         authenticate("auth-jwt-admin") {
             get("all"){
                 call.respond(userManager.allUsers())
@@ -58,11 +63,8 @@ fun Route.userRouting() {
                 call.respondText("Password Successfully  Changed")
             }
 
-            get("existing-user/{id}"){
-                call.parameters["id"]?.let {  userManager.existingUser(it.toInt()) }
-                    ?.let { call.respondText("User with ${call.parameters["id"]} exists") }
 
-            }
+
         }
     }
 
