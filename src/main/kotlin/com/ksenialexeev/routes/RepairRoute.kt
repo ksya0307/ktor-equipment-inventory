@@ -3,6 +3,7 @@ package com.ksenialexeev.routes
 import com.ksenialexeev.database.managers.RepairEquipmentManager
 import com.ksenialexeev.database.managers.RepairManager
 import com.ksenialexeev.exceptions.NotFoundException
+import com.ksenialexeev.models.CreateRepairEquipmentDto
 import com.ksenialexeev.models.RepairDto
 import com.ksenialexeev.models.UpdateRepairDto
 import io.ktor.application.*
@@ -22,7 +23,12 @@ fun Route.repairRouting() {
             }
             get("{user-id}") {
                 call.parameters["user-id"]?.let { repairEquipmentManager.getByUserId(it.toInt()) }?.also { call.respond(it) }
-                    ?: throw NotFoundException("id_param", "id")
+                    ?: throw NotFoundException("Repair not found", "")
+            }
+            post{
+                var repairData = call.receive<CreateRepairEquipmentDto>()
+                repairEquipmentManager.create(repairData)
+                call.respondText("Repair Equipment with repair Id ${repairData.repair_id} created")
             }
         }
     }

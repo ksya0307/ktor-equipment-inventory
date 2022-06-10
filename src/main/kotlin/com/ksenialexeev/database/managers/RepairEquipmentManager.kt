@@ -30,7 +30,14 @@ class RepairEquipmentManagerImpl : RepairEquipmentManager, KoinComponent {
     }
 
     override suspend fun create(dto: CreateRepairEquipmentDto) = newSuspendedTransaction(Dispatchers.IO) {
-        TODO("Not yet implemented")
+        var repair = Repair.findById(dto.repair_id) ?: throw NotFoundException("Repair Not Found", dto.repair_id)
+        var equipment = ClassroomsEquipment.findById(dto.equipment_id)?: throw NotFoundException("Equipment Not Found", dto.equipment_id)
+        RepairEquipment.new {
+            repair_id = repair
+            equipment_id = equipment
+            problem = dto.problem
+
+        }.let { mapper(it) }
     }
 
     override suspend fun update(repair_id: Int, equipment_id: Int) = newSuspendedTransaction(Dispatchers.IO) {
