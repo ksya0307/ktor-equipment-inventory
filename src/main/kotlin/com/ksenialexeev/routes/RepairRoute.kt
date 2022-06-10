@@ -34,10 +34,14 @@ fun Route.repairRouting() {
             get {
                 call.respond(repairManager.getAll())
             }
-            get("{id}") {
-                call.parameters["id"]?.let { repairManager.getById(it.toInt()) }
-                    ?.let { call.respond(it) }
+            delete("{id}") {
+                call.parameters["id"]?.let { repairManager.delete(it.toInt()) }?.let {
+                    call.respondText("Repair with Id ${call.parameters["id"]} deleted")
+                }
             }
+            }
+
+        authenticate("auth-jwt-moderator", "auth-jwt-admin", "auth-jwt-teacher") {
             post {
                 call.respond(repairManager.create(call.receive()))
             }
@@ -46,11 +50,12 @@ fun Route.repairRouting() {
                 repairManager.update(repairData.id, repairData.phone, repairData.datetime)
                 call.respondText("Repair with Id ${repairData.id} updated")
             }
-            delete("{id}") {
-                call.parameters["id"]?.let { repairManager.delete(it.toInt()) }?.let {
-                    call.respondText("Repair with Id ${call.parameters["id"]} deleted")
-                }
+            get("{id}") {
+                call.parameters["id"]?.let { repairManager.getById(it.toInt()) }
+                    ?.let { call.respond(it) }
             }
+
         }
-    }
+        }
+
 }
