@@ -51,10 +51,10 @@ fun Route.repairRouting() {
             post {
                 call.respond(repairManager.create(call.receive()))
             }
-            put {
+            put("{repair-id}") {
                 val repairData = call.receive<UpdateRepairDto>()
-                repairManager.update(repairData.id, repairData.phone, repairData.datetime)
-                call.respondText("Repair with Id ${repairData.id} updated")
+                call.parameters["repair-id"]?.let { it -> repairManager.update(it.toInt(), repairData.phone, repairData.datetime) }
+                call.respondText("Repair updated")
             }
             get("{id}") {
                 call.parameters["id"]?.let { repairManager.getById(it.toInt()) }
