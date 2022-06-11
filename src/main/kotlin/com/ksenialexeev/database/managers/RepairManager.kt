@@ -30,6 +30,7 @@ class RepairManagerImpl:RepairManager, KoinComponent {
     override suspend fun create(dto: RepairDto) = newSuspendedTransaction(Dispatchers.IO) {
         Repair.new {
             phone = dto.phone
+            datetime = dto.datetime!!
         }.let {
             UpdateRepairDto(
                 id = it.id.value,
