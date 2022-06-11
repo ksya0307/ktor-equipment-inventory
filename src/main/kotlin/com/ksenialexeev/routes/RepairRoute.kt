@@ -8,6 +8,7 @@ import com.ksenialexeev.models.RepairDto
 import com.ksenialexeev.models.UpdateRepairDto
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.auth.jwt.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -21,9 +22,11 @@ fun Route.repairRouting() {
             get {
                 call.respond(repairEquipmentManager.getAll())
             }
-            get("{user-id}") {
-                call.parameters["user-id"]?.let { repairEquipmentManager.getByUserId(it.toInt()) }?.also { call.respond(it) }
-                    ?: throw NotFoundException("Repair not found", "")
+            get() {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asInt()
+                call.respond(repairEquipmentManager.getByUserId(userId))
+
             }
             post{
                 var repairData = call.receive<CreateRepairEquipmentDto>()
