@@ -13,8 +13,9 @@ import java.time.Instant.now
 
 object Repairs : IntIdTable("repair") {
     val phone = varchar("phone",18)
-    val datetime = date("datetime").also {
-        it.defaultValueFun = { Clock.System.now().toLocalDateTime(TimeZone.UTC).date } }
+    val datetime = date("datetime")
+//        .also {
+//        it.defaultValueFun = { Clock.System.now().toLocalDateTime(TimeZone.UTC).date } }
     val completed = bool("completed").default(false)
 }
 
