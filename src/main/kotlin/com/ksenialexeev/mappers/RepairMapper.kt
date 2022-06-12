@@ -9,7 +9,9 @@ import org.koin.core.component.inject
 
 class RepairMapper: KoinComponent {
     operator fun invoke(repair: Repair) = RepairDto(
-        phone = repair.phone
+        id = repair.id.value,
+        phone = repair.phone,
+        datetime = repair.datetime
     )
 }
 
