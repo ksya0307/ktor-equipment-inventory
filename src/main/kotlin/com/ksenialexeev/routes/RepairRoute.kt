@@ -2,6 +2,7 @@ package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.RepairEquipmentManager
 import com.ksenialexeev.database.managers.RepairManager
+import com.ksenialexeev.models.CreateRepairDto
 import com.ksenialexeev.models.CreateRepairEquipmentDto
 import com.ksenialexeev.models.UpdateRepairDto
 import com.ksenialexeev.models.UpdateRepairEquipmentDto

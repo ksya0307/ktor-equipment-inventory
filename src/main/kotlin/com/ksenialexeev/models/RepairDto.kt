@@ -15,6 +15,12 @@ data class RepairDto(
 )
 
 @Serializable
+data class CreateRepairDto(
+    val phone: String,
+    val datetime: LocalDate? = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+)
+
+@Serializable
 data class UpdateRepairDto(
     val id: Int,
     val phone: String? = null,

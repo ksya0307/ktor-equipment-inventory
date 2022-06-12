@@ -3,6 +3,7 @@ package com.ksenialexeev.database.managers
 import com.ksenialexeev.database.tables.Repair
 import com.ksenialexeev.exceptions.NotFoundException
 import com.ksenialexeev.mappers.RepairMapper
+import com.ksenialexeev.models.CreateRepairDto
 import com.ksenialexeev.models.RepairDto
 import com.ksenialexeev.models.UpdateRepairDto
 import io.ktor.http.*
@@ -14,7 +15,7 @@ import org.koin.core.component.inject
 
 interface RepairManager{
     suspend fun getAll():List<RepairDto>
-    suspend fun create(dto: RepairDto):UpdateRepairDto
+    suspend fun create(dto: CreateRepairDto):UpdateRepairDto
     suspend fun update(id:Int, phone:String?, datetime:LocalDate?):RepairDto
     suspend fun delete(id:Int):HttpStatusCode
     suspend fun getById(id:Int):RepairDto
@@ -27,7 +28,7 @@ class RepairManagerImpl:RepairManager, KoinComponent {
         Repair.all().map(mapper::invoke)
     }
 
-    override suspend fun create(dto: RepairDto) = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun create(dto: CreateRepairDto) = newSuspendedTransaction(Dispatchers.IO) {
         Repair.new {
             phone = dto.phone
             datetime = dto.datetime!!
