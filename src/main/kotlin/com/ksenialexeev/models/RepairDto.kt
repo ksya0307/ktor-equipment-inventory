@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 data class RepairDto(
     val id:Int,
     val phone: String,
-    val datetime: LocalDate? = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+    val datetime: LocalDate
 )
 
 @Serializable
