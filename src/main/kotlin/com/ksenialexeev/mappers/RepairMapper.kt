@@ -18,6 +18,7 @@ class RepairEquipmentMapper: KoinComponent{
     val classroomEquipmentMapper by inject<ClassroomEquipmentMapper>()
 
     operator fun invoke(repairEquipment: RepairEquipment) =RepairEquipmentDto(
+        id = repairEquipment.id.value,
         repair = repairMapper(repair = repairEquipment.repair_id),
         equipment = classroomEquipmentMapper(classroomsEquipment =  repairEquipment.equipment_id),
         problem = repairEquipment.problem

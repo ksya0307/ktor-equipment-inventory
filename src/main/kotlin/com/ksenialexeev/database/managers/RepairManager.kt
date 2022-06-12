@@ -15,7 +15,7 @@ import org.koin.core.component.inject
 interface RepairManager{
     suspend fun getAll():List<RepairDto>
     suspend fun create(dto: RepairDto):UpdateRepairDto
-    suspend fun update(id:Int, phone:String, datetime:LocalDate):RepairDto
+    suspend fun update(id:Int, phone:String?, datetime:LocalDate?):RepairDto
     suspend fun delete(id:Int):HttpStatusCode
     suspend fun getById(id:Int):RepairDto
 }
@@ -42,12 +42,19 @@ class RepairManagerImpl:RepairManager, KoinComponent {
     }
 
 
-    override suspend fun update(id:Int, phone:String, datetime:LocalDate) = newSuspendedTransaction(Dispatchers.IO) {
-       Repair.findById(id)?.let {
-           it.phone = phone
-           it.datetime = datetime
-           mapper(it)
-       }?: throw NotFoundException("Repair not found:", id)
+    override suspend fun update(id:Int, phone:String?, datetime:LocalDate?) = newSuspendedTransaction(Dispatchers.IO) {
+
+           Repair.findById(id)?.let {
+               if (phone != null && phone.isNotEmpty()) {
+                   it.phone = phone
+               }
+               if (datetime != null) {
+                   it.datetime = datetime
+               }
+
+               mapper(it)
+           }
+        ?: throw NotFoundException("Repair not found", "")
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {

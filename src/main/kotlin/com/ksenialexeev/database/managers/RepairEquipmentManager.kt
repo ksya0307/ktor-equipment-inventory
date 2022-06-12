@@ -16,7 +16,7 @@ import org.koin.core.component.inject
 interface RepairEquipmentManager {
     suspend fun getAll(): List<RepairEquipmentDto>
     suspend fun create(dto: CreateRepairEquipmentDto): RepairEquipmentDto
-    suspend fun update(repair_id: Int, equipment_id: Int): RepairEquipmentDto
+    suspend fun update(repair_id: Int?, equipment_id: Int?, id:Int, problem:String?): RepairEquipmentDto
     suspend fun delete(id: Int): HttpStatusCode
     suspend fun getByUserId(user_id: Int): List<RepairEquipmentDto>
 }
@@ -40,16 +40,33 @@ class RepairEquipmentManagerImpl : RepairEquipmentManager, KoinComponent {
         }.let { mapper(it) }
     }
 
-    override suspend fun update(repair_id: Int, equipment_id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        TODO("Not yet implemented")
+    override suspend fun update(repair_id: Int?, equipment_id: Int?, id:Int, problem:String?) = newSuspendedTransaction(Dispatchers.IO) {
+        val repairEquipment = RepairEquipment.findById(id) ?: throw NotFoundException("Repair with id $id not found", "")
+        val equipment = equipment_id?.let { ClassroomsEquipment.findById(it) }
+        val repair = repair_id?.let { Repair.findById(it) }
+        if(repairEquipment!=null){
+            RepairEquipment.findById(id)?.let {
+                if (equipment != null) {
+                    it.equipment_id=equipment
+                }
+                if (repair != null) {
+                    it.repair_id=repair
+                }
+                if (problem != null && problem.isNotEmpty()) {
+                    it.problem = problem
+                }
+                mapper(it)
+            } ?: throw NotFoundException("Repair with id $id not found", "")
+        }else{
+             throw NotFoundException("Something went wrong", "")
+        }
     }
 
     override suspend fun delete(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-        TODO("Not yet implemented")
+        RepairEquipment.findById(id)?.let{it.delete();HttpStatusCode.OK} ?: throw NotFoundException("Repair with id $id not found", "")
     }
 
     override suspend fun getByUserId(user_id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-
         RepairEquipments
             .innerJoin(ClassroomsEquipments)
             .innerJoin(Classrooms)
@@ -64,19 +81,7 @@ class RepairEquipmentManagerImpl : RepairEquipmentManager, KoinComponent {
                     RepairEquipment.wrapRows(it).map { repairs -> mapper(repairs) }
                 }
             }
-//        val classroom =
-//            Classroom.find { Classrooms.user eq (user?.id ?: throw NotFoundException("User", user_id)) }.firstOrNull()
-//        val classroomEquipment:List<ClassroomsEquipment> = ClassroomsEquipment.find {
-//            ClassroomsEquipments.classroom eq (classroom?.id ?: throw NotFoundException("ClassroomEquipment", ""))
-//        }
-//
-//        RepairEquipment.find {
-//            RepairEquipments.equipment_id eq (classroomEquipment?.id ?: throw NotFoundException(
-//                "ClassroomEquipment",
-//                ""
-//            ))
-//        }
-//            .let { mapper(it) } ?: throw NotFoundException("Repair Equipment", user_id)
+
 
     }
 }
