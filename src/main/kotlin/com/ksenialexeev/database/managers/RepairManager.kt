@@ -8,14 +8,10 @@ import com.ksenialexeev.models.RepairDto
 import com.ksenialexeev.models.UpdateRepairDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import kotlinx.datetime.LocalDateTime
 
 
 interface RepairManager{
@@ -36,7 +32,7 @@ class RepairManagerImpl:RepairManager, KoinComponent {
     override suspend fun create(dto: CreateRepairDto) = newSuspendedTransaction(Dispatchers.IO) {
         Repair.new {
             phone = dto.phone
-            datetime = dto.datetime!!
+            datetime = dto.datetime!!.toLocalDateTime()
         }.let {
             UpdateRepairDto(
                 id = it.id.value,

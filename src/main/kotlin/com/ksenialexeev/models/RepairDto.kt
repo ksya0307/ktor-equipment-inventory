@@ -19,7 +19,7 @@ data class RepairDto(
 @Serializable
 data class CreateRepairDto(
     val phone: String,
-    val datetime: LocalDateTime? = dateTimeInUtc
+    val datetime: String? = dateTimeInUtc.toString()
 )
 
 @Serializable
