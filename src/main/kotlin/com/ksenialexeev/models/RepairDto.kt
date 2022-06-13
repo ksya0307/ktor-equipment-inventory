@@ -1,30 +1,32 @@
 package com.ksenialexeev.models
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+
+import com.ksenialexeev.dateTimeInUtc
 import kotlinx.serialization.Serializable
+
+import kotlinx.datetime.LocalDateTime
 
 
 @Serializable
 data class RepairDto(
     val id:Int,
     val phone: String,
-    val datetime: LocalDate
+    val datetime: LocalDateTime
 )
+
+
 
 @Serializable
 data class CreateRepairDto(
     val phone: String,
-    val datetime: LocalDate? = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+    val datetime: LocalDateTime? = dateTimeInUtc
 )
 
 @Serializable
 data class UpdateRepairDto(
     val id: Int,
     val phone: String? = null,
-    val datetime: LocalDate? = null,
+    val datetime: LocalDateTime? = null,
     val completed: Boolean? = null
 )
 

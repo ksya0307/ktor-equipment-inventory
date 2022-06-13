@@ -9,14 +9,19 @@ import com.ksenialexeev.models.UpdateRepairDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toKotlinLocalDateTime
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlinx.datetime.LocalDateTime
+
 
 interface RepairManager{
     suspend fun getAll():List<RepairDto>
     suspend fun create(dto: CreateRepairDto):UpdateRepairDto
-    suspend fun update(id:Int, phone:String?, datetime:LocalDate?):RepairDto
+    suspend fun update(id:Int, phone:String?, datetime: LocalDateTime?):RepairDto
     suspend fun delete(id:Int):HttpStatusCode
     suspend fun getById(id:Int):RepairDto
 }
@@ -43,7 +48,7 @@ class RepairManagerImpl:RepairManager, KoinComponent {
     }
 
 
-    override suspend fun update(id:Int, phone:String?, datetime:LocalDate?) = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun update(id:Int, phone:String?, datetime: LocalDateTime?) = newSuspendedTransaction(Dispatchers.IO) {
 
            Repair.findById(id)?.let {
                if (phone != null && phone.isNotEmpty()) {

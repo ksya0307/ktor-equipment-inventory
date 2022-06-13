@@ -17,9 +17,11 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.datetime.*
 import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
+
 
 val accessTokenPeriod = (System.getenv("ACCESS_TOKEN_LIFETIME")?.toInt()?.times(60000)) ?: (60000 * 15) //millis
 val refreshTokenPeriod = (System.getenv("REFRESH_TOKEN_LIFETIME")?.toInt()?.times((86400000))) ?: ( 86400000  * 5)//millis
@@ -29,6 +31,10 @@ val myRealm = System.getenv("REALM")?.toString() ?: "Access to 'login'"
 val issuer = System.getenv("ISSUER")?.toString() ?: "ktor"
 val secret = System.getenv("SECRET")?.toString() ?: "equilibrium"
 val algorithm: Algorithm = Algorithm.HMAC256(secret)!!
+
+val currentMoment :Instant= Clock.System.now()
+val dateTimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
+
 
 fun main() {
 
