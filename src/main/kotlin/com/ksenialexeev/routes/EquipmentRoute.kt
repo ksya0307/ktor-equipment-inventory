@@ -2,6 +2,7 @@ package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.EquipmentManager
 import com.ksenialexeev.models.CreateEquipmentDto
+import com.ksenialexeev.models.UpdateEquipmentDto
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.request.*
@@ -24,13 +25,18 @@ fun Route.equipmentRouting() {
         authenticate("auth-jwt-moderator", "auth-jwt-admin") {
             post {
                 val newEquipment = call.receive<CreateEquipmentDto>()
-                val equipment = equipmentManager.create(newEquipment)
+                equipmentManager.create(newEquipment)
                 call.respondText("Equipment been created ${newEquipment.description}, ${newEquipment.category}")
             }
             delete("{id}") {
                 call.parameters["id"]?.let { equipmentManager.delete(it.toInt()) }
                     ?.let { call.respondText("Equipment with Id ${call.parameters["id"]} deleted") }
 
+            }
+            put("update") {
+                val updEquipment = call.receive<UpdateEquipmentDto>()
+                equipmentManager.update(updEquipment.id, updEquipment.description, updEquipment.categoryId)
+                call.respondText("Equipment updated")
             }
         }
     }

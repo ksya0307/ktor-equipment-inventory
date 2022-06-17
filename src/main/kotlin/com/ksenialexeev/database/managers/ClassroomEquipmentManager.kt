@@ -20,7 +20,6 @@ interface ClassroomEquipmentManager {
         classroom: String?,
         equipmentCategory: String?
     ): List<ClassroomEquipmentDto?>
-
     suspend fun getSpecsById(id: Int): EquipmentSpecsDto
     suspend fun create(dto: CreateClassroomEquipmentDto): ClassroomEquipmentDto?
     suspend fun update(

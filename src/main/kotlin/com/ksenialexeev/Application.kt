@@ -37,6 +37,11 @@ val dateTimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
 
 
 fun main() {
+   // var df = Instant.parse("2022-06-13T08:56:42.702457800")
+    val fd = "2022-06-13T08:56:42.702457".toLocalDateTime()
+println(fd)
+    println("DATE TIME")
+    println(dateTimeInUtc)
     initDatabase()
 
     //Heroku uses the PORT environment variable

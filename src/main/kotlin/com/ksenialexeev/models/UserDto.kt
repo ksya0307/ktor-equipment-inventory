@@ -14,15 +14,15 @@ data class UserDto(
     val role: Role
 )
 
-@Serializable
-data class CreateUserDto(
-    val surname: String,
-    val name: String,
-    val patronymic: String? = null,
-    val username: String,
-    val password: String,
-    val role: Role? = Role.COMMON
-)
+    @Serializable
+    data class CreateUserDto(
+        val surname: String,
+        val name: String,
+        val patronymic: String? = null,
+        val username: String,
+        val password: String,
+        val role: Role? = Role.COMMON
+    )
 
 
 @Serializable
