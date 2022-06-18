@@ -38,6 +38,12 @@ fun Route.equipmentRouting() {
                 equipmentManager.update(updEquipment.id, updEquipment.description, updEquipment.categoryId)
                 call.respondText("Equipment updated")
             }
+            get("sorted"){
+                call.request.queryParameters["category-id"]?.let {
+                    equipmentManager.getByCategory(
+                        it.toInt())
+                }?.let { it1 -> call.respond(it1) }
+            }
         }
     }
 }

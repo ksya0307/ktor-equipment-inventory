@@ -21,6 +21,7 @@ interface EquipmentManager {
     suspend fun getAll(): List<EquipmentDto>
     suspend fun delete(id: Int): HttpStatusCode
     suspend fun update(id: Int, description: String, categoryId: Int): EquipmentDto
+    suspend fun getByCategory(categoryId:Int):List<EquipmentDto>
 }
 
 class EquipmentManagerImpl : EquipmentManager, KoinComponent {
@@ -69,5 +70,11 @@ class EquipmentManagerImpl : EquipmentManager, KoinComponent {
                 throw NotFoundException("Equipment already exists", description)
             }
         }
+
+    override suspend fun getByCategory(categoryId: Int)= newSuspendedTransaction(Dispatchers.IO){
+        val category = Category.findById(categoryId) ?:  throw NotFoundException("Category not found", categoryId)
+       Equipment.all().filter { it.category == category }.map(mapper::invoke)
+
+    }
 
 }
