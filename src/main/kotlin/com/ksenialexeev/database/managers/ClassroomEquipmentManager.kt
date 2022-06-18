@@ -84,7 +84,8 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
 
         val classroomId = Classroom.find { Classrooms.id eq dto.classroom.toString() }.firstOrNull()
         println("classroomId - ${classroomId?.id}")
-        val equipmentId = Equipment.find { Equipments.description eq dto.equipment }.firstOrNull()
+        val equipmentEnt = Equipment.findById(dto.equipment) ?: throw NotFoundException("Equipment not found", dto.equipment)
+        println("eq $equipmentEnt")
         val existingInventoryNumber =
             ClassroomsEquipment.find { ClassroomsEquipments.inventory_number eq dto.inventory_number }
         if (existingInventoryNumber.empty()) {
@@ -93,9 +94,9 @@ class ClassroomEquipmentManagerImpl : ClassroomEquipmentManager, KoinComponent {
                 if (classroomId != null) {
                     classroom = classroomId
                 }
-                if (equipmentId != null) {
-                    equipment = equipmentId
-                }
+
+                    equipment = equipmentEnt
+
                 if (dto.number_in_classroom != null) {
                     number_in_classroom = dto.number_in_classroom.toString()
                 }

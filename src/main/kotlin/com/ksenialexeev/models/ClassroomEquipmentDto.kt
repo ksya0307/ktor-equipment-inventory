@@ -17,7 +17,7 @@ data class ClassroomEquipmentDto(
 data class CreateClassroomEquipmentDto(
     val inventory_number: Long,
     val classroom: String? = null,
-    val equipment: String,
+    val equipment: Int,
     val number_in_classroom: String? = null,
     val equipment_type: EquipmentBelonging
 )

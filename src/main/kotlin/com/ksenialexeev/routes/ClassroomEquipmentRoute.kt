@@ -38,7 +38,7 @@ fun Route.classroomEquipment() {
         authenticate("auth-jwt-moderator", "auth-jwt-admin") {
             post {
                 val newClEq = call.receive<CreateClassroomEquipmentDto>()
-                println("${newClEq.classroom} ${newClEq.number_in_classroom}")
+                println("ALOOOO ${newClEq.equipment} ${newClEq.number_in_classroom}")
                 classroomEquipmentManager.create(newClEq)
 
                 call.respondText("Classroom Equipment created")
