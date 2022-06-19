@@ -38,13 +38,12 @@ class InventoryManagerImpl : InventoryManager, KoinComponent {
             "Inventory Number not found",
             dto.inventory_number
         )
-        var documentEntity = Document.find { Documents.name eq dto.document }.firstOrNull()
-            ?: throw NotFoundException("Document Not Found", dto.document)
+        var documentEntity = Document.findById(dto.document)    ?: throw NotFoundException("Document Not Found", dto.ifo)
         var ifoEntity =
-            Ifo.find { Ifos.name eq dto.ifo }.firstOrNull() ?: throw NotFoundException("IFO Not Found", dto.ifo)
+            Ifo.findById(dto.ifo) ?: throw NotFoundException("IFO Not Found", dto.ifo)
         var classroom = Classroom.find { Classrooms.id eq dto.for_classroom }.firstOrNull()
             ?: throw NotFoundException("Classroom Not Found", dto.for_classroom)
-        var inventory = Inventory.find { Inventories.inventory_number eq dto.inventory_number }
+        var inventory = Inventory.find { Inventories.inventory_number eq classroomEquipment.id }
         if (inventory.empty()) {
             Inventory.new {
                 inventory_number = classroomEquipment

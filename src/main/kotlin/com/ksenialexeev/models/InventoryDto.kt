@@ -19,8 +19,8 @@ data class InventoryDto(
 data class CreateInventoryDto(
     val inventory_number:Int,
     val get_date: LocalDate,
-    val document: String,
-    val ifo:String,
+    val document: Int,
+    val ifo:Int,
     val for_classroom: String,
     val given: Boolean,
     val by_request: Boolean
