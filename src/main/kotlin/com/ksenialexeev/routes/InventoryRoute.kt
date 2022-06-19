@@ -25,6 +25,9 @@ fun Route.inventoryRouting() {
                 val inventoryData = call.receive<CreateInventoryDto>()
                  call.respond(inventoryManager.create(inventoryData)!!)
             }
+            get("not-in-inventory"){
+                call.respond(inventoryManager.notInInventory())
+            }
         }
     }
 }

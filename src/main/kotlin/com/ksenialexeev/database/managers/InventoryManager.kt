@@ -9,6 +9,10 @@ import com.ksenialexeev.models.CreateInventoryDto
 import com.ksenialexeev.models.InventoryDto
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
+import org.jetbrains.exposed.sql.andWhere
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -18,6 +22,7 @@ interface InventoryManager {
     suspend fun delete(id: Int): HttpStatusCode
     suspend fun create(dto: CreateInventoryDto): InventoryDto?
     suspend fun update(): InventoryDto
+    suspend fun notInInventory(): List<ClassroomEquipmentDto?>
 }
 
 class InventoryManagerImpl : InventoryManager, KoinComponent {
@@ -44,8 +49,8 @@ class InventoryManagerImpl : InventoryManager, KoinComponent {
             "Inventory Number not found",
             dto.inventory_number
         )
-        var documentEntity = Document.findById(dto.document)    ?: throw NotFoundException("Document Not Found", dto.ifo)
-        var ifoEntity =
+        val documentEntity = Document.findById(dto.document) ?: throw NotFoundException("Document Not Found", dto.ifo)
+        val ifoEntity =
             Ifo.findById(dto.ifo) ?: throw NotFoundException("IFO Not Found", dto.ifo)
         var classroom = Classroom.find { Classrooms.id eq dto.for_classroom }.firstOrNull()
             ?: throw NotFoundException("Classroom Not Found", dto.for_classroom)
@@ -87,5 +92,17 @@ class InventoryManagerImpl : InventoryManager, KoinComponent {
 
     override suspend fun update(): InventoryDto {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun notInInventory() = newSuspendedTransaction(Dispatchers.IO) {
+        ClassroomsEquipment
+            .find {
+                ClassroomsEquipments.id notInSubQuery
+                    Inventories
+                        .slice(Inventories.inventory_number)
+                        .selectAll()
+                        .withDistinct(true)
+            }
+            .map(clEqMapper::invoke)
     }
 }
