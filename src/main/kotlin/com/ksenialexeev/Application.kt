@@ -33,7 +33,7 @@ val secret = System.getenv("SECRET")?.toString() ?: "equilibrium"
 val algorithm: Algorithm = Algorithm.HMAC256(secret)!!
 
 val currentMoment :Instant= Clock.System.now()
-val dateTimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
+val dateTimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
 
 
 fun main() {

@@ -23,8 +23,7 @@ fun Route.inventoryRouting() {
             }
             post {
                 val inventoryData = call.receive<CreateInventoryDto>()
-                inventoryManager.create(inventoryData)
-                call.respondText("Inventory Done")
+                 call.respond(inventoryManager.create(inventoryData)!!)
             }
         }
     }

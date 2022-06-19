@@ -1,8 +1,10 @@
 package com.ksenialexeev.routes
 
 import com.ksenialexeev.database.managers.CommentManager
+import com.ksenialexeev.models.CreateCommentDto
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
@@ -25,6 +27,11 @@ fun Route.commentRouting() {
                 call.parameters["id"]?.let { commentManager.delete(it.toInt()) }
                     ?.let { call.respondText("Comment with id ${call.parameters["id"]} deleted") }
 
+            }
+            post{
+                val commentData = call.receive<CreateCommentDto>()
+                commentManager.create(commentData)
+                call.respondText("Comment create at ${commentData.datetime}")
             }
         }
     }
